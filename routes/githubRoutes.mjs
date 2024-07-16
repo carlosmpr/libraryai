@@ -1,18 +1,13 @@
 import express from 'express';
 import { Octokit } from '@octokit/rest';
-import { ensureAuthenticated } from '../middleware/authMiddleware.mjs'
+import { ensureAuthenticated } from '../middleware/authMiddleware.mjs';
 
 const router = express.Router();
 
-router.post('/create-repository', async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1]; // Assumes "Bearer TOKEN"
-    if (!token) {
-        return res.status(401).send('You must be authenticated with GitHub to perform this action.');
-    }
+router.post('/create-repository', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
 
-    const octokit = new Octokit({
-        auth: token
-    });
+    const octokit = new Octokit({ auth: token });
 
     try {
         const { name } = req.body; // Repository name passed from the client
@@ -30,23 +25,18 @@ router.post('/create-repository', async (req, res) => {
     }
 });
 
-router.post('/create-folder', async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1]; // Assumes "Bearer TOKEN"
-    if (!token) {
-        return res.status(401).send('You must be authenticated with GitHub to perform this action.');
-    }
+router.post('/create-folder', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
 
-    const { folderName, repository, owner } = req.body;
-    const octokit = new Octokit({
-        auth: token
-    });
+    const { folderName, repository } = req.body;
+    const octokit = new Octokit({ auth: token });
 
     try {
         const path = `${folderName}/README.md`; // The path at which the README.md will be created
         const content = Buffer.from(`# ${folderName}\nThis is the README for the ${folderName}`).toString('base64'); // Content of the README.md file
 
         const response = await octokit.rest.repos.createOrUpdateFileContents({
-            owner: owner,
+            owner: req.user.profile.username,
             repo: repository,
             path: path,
             message: `Create ${folderName} and add README`,
@@ -64,7 +54,7 @@ router.post('/create-folder', async (req, res) => {
 });
 
 router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
-    const token = req.token;
+    const token = req.user.accessToken;
     const repo = req.query.repo;
 
     if (!repo) {
@@ -74,11 +64,9 @@ router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
     const octokit = new Octokit({ auth: token });
 
     try {
-        const { data: { login: owner } } = await octokit.rest.users.getAuthenticated();
-
         const getContents = async (path = '') => {
             const response = await octokit.rest.repos.getContent({
-                owner: owner,
+                owner: req.user.profile.username,
                 repo: repo,
                 path: path,
                 ref: 'main'
@@ -91,7 +79,7 @@ router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
                             name: file.name,
                             path: file.path,
                             type: file.type,
-                            contents: await getContents(file.path) 
+                            contents: await getContents(file.path)
                         };
                     } else {
                         return {
@@ -130,6 +118,49 @@ router.get('/auth/status', (req, res) => {
         res.json({ isAuthenticated: true, user: req.user.profile });
     } else {
         res.json({ isAuthenticated: false });
+    }
+});
+
+// New route to search for repositories starting with "library"
+router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const username = req.user.profile.username;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        const { data } = await octokit.rest.search.repos({
+            q: `user:${username} library in:name`,
+            sort: 'stars',
+            order: 'desc'
+        });
+
+        res.json({
+            message: 'Repositories fetched successfully!',
+            repositories: data.items
+        });
+    } catch (error) {
+        console.error('Failed to fetch repositories:', error);
+        res.status(500).send('Failed to fetch repositories');
+    }
+});
+
+
+
+router.get('/repositories', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser();
+
+        res.json({
+            message: 'Repositories fetched successfully!',
+            repositories: repos
+        });
+    } catch (error) {
+        console.error('Failed to fetch repositories:', error);
+        res.status(500).send('Failed to fetch repositories');
     }
 });
 

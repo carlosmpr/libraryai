@@ -27,11 +27,20 @@ router.get('/mainlibrary', ensureAuthenticated, (req, res) => {
 });
 
 
-// Fallback route: Serve the index.html for any other paths
-router.get('*', (req, res) => {
-    console.log('Fallback route accessed. Serving index.html');
-    res.sendFile(path.join(distPath, 'index.html'));
+router.get('/gettoken', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.send(`Hello, ${req.user.profile.username}! Token: ${req.user.accessToken}`);
+    } else {
+        res.send('Please login via GitHub.');
+    }
 });
+
+
+// Fallback route: Serve the index.html for any other paths
+// router.get('*', (req, res) => {
+//     console.log('Fallback route accessed. Serving index.html');
+//     res.sendFile(path.join(distPath, 'index.html'));
+// });
 
 router.use(express.static(distPath));
 

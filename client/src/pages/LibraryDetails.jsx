@@ -7,6 +7,9 @@ const LibraryDetails = () => {
     const [loading, setLoading] = useState(true);
     const [newFolderName, setNewFolderName] = useState('');
     const [creatingFolder, setCreatingFolder] = useState(false);
+    const [uploadingFile, setUploadingFile] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
+    const [uploadPath, setUploadPath] = useState('');
 
     const fetchContents = async (path = '') => {
         try {
@@ -69,15 +72,55 @@ const LibraryDetails = () => {
         }
     };
 
-    const renderTree = (items) => {
+    const handleFileUpload = async (e) => {
+        e.preventDefault();
+        if (!selectedFile || !uploadPath) return;
+
+        setUploadingFile(true);
+
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('repository', repoName);
+        formData.append('path', uploadPath);
+
+        try {
+            const response = await fetch('/api/upload-file', {
+                method: 'POST',
+                credentials: 'include', // Include cookies in the request
+                body: formData
+            });
+
+            if (response.ok) {
+                setSelectedFile(null);
+                setUploadPath('');
+                loadContents(); // Refresh the contents after uploading the file
+            } else {
+                console.error('Failed to upload file');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setUploadingFile(false);
+        }
+    };
+
+    const renderTree = (items, parentPath = '') => {
         return (
             <ul>
                 {items.map(item => (
                     <li key={item.path}>
                         {item.type === 'dir' ? (
                             <details>
-                                <summary>📁 {item.name}</summary>
-                                <DirectoryContents path={item.path} />
+                                <summary>
+                                    📁 {item.name}
+                                    <input
+                                        type="radio"
+                                        name="uploadPath"
+                                        value={`${parentPath}/${item.name}`}
+                                        onChange={(e) => setUploadPath(e.target.value)}
+                                    />
+                                </summary>
+                                <DirectoryContents path={`${parentPath}/${item.name}`} />
                             </details>
                         ) : (
                             <a href={item.download_url} target="_blank" rel="noopener noreferrer">
@@ -107,7 +150,7 @@ const LibraryDetails = () => {
             return <div>Loading...</div>;
         }
 
-        return renderTree(dirContents);
+        return renderTree(dirContents, path);
     };
 
     if (loading) {
@@ -129,6 +172,17 @@ const LibraryDetails = () => {
                 />
                 <button type="submit" disabled={creatingFolder}>
                     {creatingFolder ? 'Creating...' : 'Create Folder'}
+                </button>
+            </form>
+            <h2>Upload File</h2>
+            <form onSubmit={handleFileUpload}>
+                <input
+                    type="file"
+                    onChange={(e) => setSelectedFile(e.target.files[0])}
+                    required
+                />
+                <button type="submit" disabled={uploadingFile || !uploadPath}>
+                    {uploadingFile ? 'Uploading...' : 'Upload File'}
                 </button>
             </form>
         </div>

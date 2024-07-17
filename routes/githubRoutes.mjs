@@ -17,6 +17,7 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         });
         res.json({
             message: 'Repository created successfully!',
+            repository: response.data,
             repositoryUrl: response.data.html_url
         });
     } catch (error) {
@@ -28,23 +29,24 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
 router.post('/create-folder', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
 
-    const { folderName, repository } = req.body;
+    const { folderName, repository, path = '' } = req.body;
     const octokit = new Octokit({ auth: token });
 
     try {
-        const path = `${folderName}/README.md`; // The path at which the README.md will be created
-        const content = Buffer.from(`# ${folderName}\nThis is the README for the ${folderName}`).toString('base64'); // Content of the README.md file
+        // Ensure the path does not start with a slash
+        const fullPath = path ? `${path}/${folderName}/.gitkeep` : `${folderName}/.gitkeep`;
+        const content = ''; // Content of the .gitkeep file
 
         const response = await octokit.rest.repos.createOrUpdateFileContents({
             owner: req.user.profile.username,
             repo: repository,
-            path: path,
-            message: `Create ${folderName} and add README`,
-            content: content
+            path: fullPath,
+            message: `Create ${folderName} directory with .gitkeep`,
+            content: Buffer.from(content).toString('base64')
         });
 
         res.json({
-            message: 'Folder and README created successfully!',
+            message: 'Folder and .gitkeep created successfully!',
             data: response.data
         });
     } catch (error) {

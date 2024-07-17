@@ -5,6 +5,8 @@ const LibraryDetails = () => {
     const { repoName } = useParams();
     const [contents, setContents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [newFolderName, setNewFolderName] = useState('');
+    const [creatingFolder, setCreatingFolder] = useState(false);
 
     const fetchContents = async (path = '') => {
         try {
@@ -39,6 +41,33 @@ const LibraryDetails = () => {
     useEffect(() => {
         loadContents();
     }, [repoName]);
+
+    const handleCreateFolder = async (e) => {
+        e.preventDefault();
+        setCreatingFolder(true);
+
+        try {
+            const response = await fetch('/api/create-folder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                credentials: 'include', // Include cookies in the request
+                body: JSON.stringify({ folderName: newFolderName, repository: repoName })
+            });
+
+            if (response.ok) {
+                setNewFolderName('');
+                loadContents(); // Refresh the contents after creating a folder
+            } else {
+                console.error('Failed to create folder');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            setCreatingFolder(false);
+        }
+    };
 
     const renderTree = (items) => {
         return (
@@ -89,6 +118,19 @@ const LibraryDetails = () => {
         <div>
             <h1>Contents of {repoName}</h1>
             {renderTree(contents)}
+            <h2>Create New Folder</h2>
+            <form onSubmit={handleCreateFolder}>
+                <input
+                    type="text"
+                    value={newFolderName}
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    placeholder="Folder name"
+                    required
+                />
+                <button type="submit" disabled={creatingFolder}>
+                    {creatingFolder ? 'Creating...' : 'Create Folder'}
+                </button>
+            </form>
         </div>
     );
 };

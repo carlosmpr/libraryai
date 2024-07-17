@@ -1,6 +1,13 @@
+/* eslint-disable react/no-children-prop */
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
+import Markdown from "react-markdown";
+import rehypeRaw from 'rehype-raw';
+import rehypeSanitize from 'rehype-sanitize';
+import rehypeHighlight from 'rehype-highlight';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import 'github-markdown-css/github-markdown.css';
 
 const LibraryDetails = () => {
     const { repoName } = useParams();
@@ -12,6 +19,8 @@ const LibraryDetails = () => {
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadPath, setUploadPath] = useState('');
     const [selectedFileContent, setSelectedFileContent] = useState('');
+
+
 
     const fetchContents = async (path = '') => {
         try {
@@ -111,6 +120,7 @@ const LibraryDetails = () => {
             try {
                 const response = await fetch(file.download_url);
                 const text = await response.text();
+                console.log("Fetched Markdown Content:", text); // Log the fetched markdown content
                 setSelectedFileContent(text);
             } catch (error) {
                 console.error('Failed to fetch file content', error);
@@ -200,9 +210,32 @@ const LibraryDetails = () => {
                 </button>
             </form>
             {selectedFileContent && (
-                <div>
+                <div className="markdown-body">
                     <h2>File Preview</h2>
-                    <ReactMarkdown>{selectedFileContent}</ReactMarkdown>
+                    <Markdown
+                     rehypePlugins={[rehypeRaw, rehypeSanitize]}
+      components={{
+        code({ node, inline, className, children, ...props }) {
+          const match = /language-(\w+)/.exec(className || "");
+
+          return !inline && match ? (
+            <SyntaxHighlighter
+              style={materialDark}
+              PreTag="div"
+              language={match[1]}
+              children={String(children).replace(/\n$/, "")}
+              {...props}
+            />
+          ) : (
+            <code className={className ? className : ""} {...props}>
+              {children}
+            </code>
+          );
+        },
+      }}
+    >
+      {selectedFileContent}
+    </Markdown>
                 </div>
             )}
         </div>
@@ -210,3 +243,5 @@ const LibraryDetails = () => {
 };
 
 export default LibraryDetails;
+
+

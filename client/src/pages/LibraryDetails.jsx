@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 
 const LibraryDetails = () => {
     const { repoName } = useParams();
@@ -10,6 +11,7 @@ const LibraryDetails = () => {
     const [uploadingFile, setUploadingFile] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const [uploadPath, setUploadPath] = useState('');
+    const [selectedFileContent, setSelectedFileContent] = useState('');
 
     const fetchContents = async (path = '') => {
         try {
@@ -104,6 +106,18 @@ const LibraryDetails = () => {
         }
     };
 
+    const handleFileClick = async (file) => {
+        if (file.path.endsWith('.md')) {
+            try {
+                const response = await fetch(file.download_url);
+                const text = await response.text();
+                setSelectedFileContent(text);
+            } catch (error) {
+                console.error('Failed to fetch file content', error);
+            }
+        }
+    };
+
     const renderTree = (items, parentPath = '') => {
         return (
             <ul>
@@ -123,9 +137,9 @@ const LibraryDetails = () => {
                                 <DirectoryContents path={`${parentPath}/${item.name}`} />
                             </details>
                         ) : (
-                            <a href={item.download_url} target="_blank" rel="noopener noreferrer">
+                            <span onClick={() => handleFileClick(item)} style={{ cursor: 'pointer', color: 'blue' }}>
                                 📄 {item.name}
-                            </a>
+                            </span>
                         )}
                     </li>
                 ))}
@@ -185,6 +199,12 @@ const LibraryDetails = () => {
                     {uploadingFile ? 'Uploading...' : 'Upload File'}
                 </button>
             </form>
+            {selectedFileContent && (
+                <div>
+                    <h2>File Preview</h2>
+                    <ReactMarkdown>{selectedFileContent}</ReactMarkdown>
+                </div>
+            )}
         </div>
     );
 };

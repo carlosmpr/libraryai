@@ -10,6 +10,8 @@ const router = express.Router();
 
 const distPath = path.join(__dirname, '../dist');
 
+// Serve static files
+router.use(express.static(distPath));
 
 // Root route: Redirect to /mainlibrary if authenticated
 router.get('/', (req, res) => {
@@ -26,24 +28,16 @@ router.get('/mainlibrary', ensureAuthenticated, (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
 });
 
-
-router.get('/gettoken', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.send(`Hello, ${req.user.profile.username}! Token: ${req.user.accessToken}`);
-    } else {
-        res.send('Please login via GitHub.');
-    }
+// Route to serve library details page
+router.get('/library/:repoName', ensureAuthenticated, (req, res) => {
+    console.log('Serving library page');
+    res.sendFile(path.join(distPath, 'index.html'));
 });
 
-
 // Fallback route: Serve the index.html for any other paths
-// router.get('*', (req, res) => {
-//     console.log('Fallback route accessed. Serving index.html');
-//     res.sendFile(path.join(distPath, 'index.html'));
-// });
-
-router.use(express.static(distPath));
-
-
+router.get('*', (req, res) => {
+    console.log('Fallback route accessed. Serving index.html');
+    res.sendFile(path.join(distPath, 'index.html'));
+});
 
 export default router;

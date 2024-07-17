@@ -55,7 +55,7 @@ router.post('/create-folder', ensureAuthenticated, async (req, res) => {
 
 router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
-    const repo = req.query.repo;
+    const { repo, path = '' } = req.query;
 
     if (!repo) {
         return res.status(400).send('Repository name is required.');
@@ -64,48 +64,24 @@ router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
     const octokit = new Octokit({ auth: token });
 
     try {
-        const getContents = async (path = '') => {
-            const response = await octokit.rest.repos.getContent({
-                owner: req.user.profile.username,
-                repo: repo,
-                path: path,
-                ref: 'main'
-            });
+        const response = await octokit.rest.repos.getContent({
+            owner: req.user.profile.username,
+            repo: repo,
+            path: path,
+            ref: 'main'
+        });
 
-            if (Array.isArray(response.data)) {
-                return Promise.all(response.data.map(async (file) => {
-                    if (file.type === 'dir') {
-                        return {
-                            name: file.name,
-                            path: file.path,
-                            type: file.type,
-                            contents: await getContents(file.path)
-                        };
-                    } else {
-                        return {
-                            name: file.name,
-                            path: file.path,
-                            type: file.type,
-                            download_url: file.download_url
-                        };
-                    }
-                }));
-            } else {
-                return {
-                    name: response.data.name,
-                    path: response.data.path,
-                    type: response.data.type,
-                    download_url: response.data.download_url,
-                    content: Buffer.from(response.data.content, 'base64').toString('utf-8')
-                };
-            }
-        };
-
-        const contents = await getContents();
+        const contents = Array.isArray(response.data) ? response.data : [response.data];
 
         res.json({
             message: 'Repository contents fetched successfully!',
-            contents: contents
+            contents: contents.map(item => ({
+                name: item.name,
+                path: item.path,
+                type: item.type,
+                download_url: item.download_url || null,
+                content: item.content ? Buffer.from(item.content, 'base64').toString('utf-8') : null
+            }))
         });
     } catch (error) {
         console.error('Failed to fetch repository contents:', error);

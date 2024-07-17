@@ -1,4 +1,5 @@
 import  { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const MainLibrary = () => {
     const [repositories, setRepositories] = useState([]);
@@ -41,9 +42,9 @@ const MainLibrary = () => {
             <ul>
                 {repositories.map(repo => (
                     <li key={repo.id}>
-                        <a href={repo.html_url} target="_blank" rel="noopener noreferrer">
+                        <Link to={`/library/${repo.name}`}>
                             {repo.name}
-                        </a>
+                        </Link>
                     </li>
                 ))}
             </ul>

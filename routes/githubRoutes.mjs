@@ -130,9 +130,9 @@ router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
 });
 
 
-router.post('/upload-file', ensureAuthenticated, upload.single('file'), async (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
+router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async (req, res) => {
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).send('No files uploaded.');
     }
 
     const { repository, path: uploadPath } = req.body;
@@ -140,37 +140,37 @@ router.post('/upload-file', ensureAuthenticated, upload.single('file'), async (r
     const octokit = new Octokit({ auth: token });
 
     try {
-        const content = req.file.buffer.toString('utf8');
+        const results = [];
 
-        // Process the file with OpenAI and create markdown content
-        const completion = await createFile(content);
-        const explanation = completion.text;
-        const markdownContent = createMarkdown(req.file.originalname, explanation, content);
+        for (const file of req.files) {
+            const content = file.buffer.toString('utf8');
+            const completion = await createFile(content);
+            const explanation = completion.text;
+            const markdownContent = createMarkdown(file.originalname, explanation, content);
 
-        // Remove leading slash from the upload path if it exists
-        const cleanPath = uploadPath.startsWith('/') ? uploadPath.substring(1) : uploadPath;
-        // Create the markdown file path
-        const markdownFilePath = `${cleanPath}/${req.file.originalname.replace(/\.(jsx?|tsx?)$/, '.md')}`;
+            const cleanPath = uploadPath.startsWith('/') ? uploadPath.substring(1) : uploadPath;
+            const markdownFilePath = `${cleanPath}/${file.originalname.replace(/\.(jsx?|tsx?)$/, '.md')}`;
 
-        // Upload the markdown file to GitHub
-        const response = await octokit.rest.repos.createOrUpdateFileContents({
-            owner: req.user.profile.username,
-            repo: repository,
-            path: markdownFilePath,
-            message: `Upload file ${req.file.originalname}`,
-            content: Buffer.from(markdownContent).toString('base64')
-        });
+            const response = await octokit.rest.repos.createOrUpdateFileContents({
+                owner: req.user.profile.username,
+                repo: repository,
+                path: markdownFilePath,
+                message: `Upload file ${file.originalname}`,
+                content: Buffer.from(markdownContent).toString('base64')
+            });
+
+            results.push(response.data);
+        }
 
         res.json({
-            message: 'File uploaded successfully!',
-            data: response.data
+            message: 'Files uploaded successfully!',
+            data: results
         });
     } catch (error) {
-        console.error('Failed to upload file:', error);
-        res.status(500).send('Failed to upload file');
+        console.error('Failed to upload files:', error);
+        res.status(500).send('Failed to upload files');
     }
 });
-
 router.get('/repositories', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
 

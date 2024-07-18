@@ -5,40 +5,6 @@ import UploadFile from "./UploadFile";
 import CreateFolder from "./CreateFolder";
 import FilePreview from "./FilePreview";
 
-const testContents = [
-  {
-    path: "src",
-    name: "src",
-    type: "dir",
-    contents: [
-      {
-        path: "src/components",
-        name: "components",
-        type: "dir",
-        contents: [
-          {
-            path: "src/components/Button.js",
-            name: "Button.js",
-            type: "file",
-            download_url: "https://example.com/Button.js",
-          },
-        ],
-      },
-      {
-        path: "src/index.js",
-        name: "index.js",
-        type: "file",
-        download_url: "https://example.com/index.js",
-      },
-    ],
-  },
-  {
-    path: "README.md",
-    name: "README.md",
-    type: "file",
-    download_url: "https://example.com/README.md",
-  },
-];
 
 const LibraryDetails = () => {
   const { repoName } = useParams();
@@ -117,15 +83,15 @@ const LibraryDetails = () => {
           <FilePreview selectedFileContent={selectedFileContent} />
         )}
       </div>
-      <div className="fixed bottom-0">
-        <div className="flex">
-          <h2>Create New Folder</h2>
+      <div className="fixed w-full bottom-0">
+        <div className="ml-[20%] flex w-full bg-base-100 p-4 mx-auto border-t-2 border-black gap-4">
           <CreateFolder repoName={repoName} loadContents={loadContents} />
-          <h2>Upload File</h2>
+          
           <UploadFile
             repoName={repoName}
             loadContents={loadContents}
             uploadPath={uploadPath}
+            contents={contents}
           />
         </div>
       </div>

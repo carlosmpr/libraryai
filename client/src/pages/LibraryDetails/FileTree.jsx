@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from 'react';
+import { useState  } from 'react';
 import { FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 
-const FileTree = ({ contents, handleFileClick, fetchContents, setUploadPath }) => {
+const FileTree = ({ contents, handleFileClick, fetchContents, }) => {
     const [openFolders, setOpenFolders] = useState({});
     const [cache, setCache] = useState({});
 
@@ -38,13 +38,7 @@ const FileTree = ({ contents, handleFileClick, fetchContents, setUploadPath }) =
                                     <FolderIcon className="w-4 h-4 mr-1" />
                                 )}
                                 <span>{item.name}</span>
-                                <input
-                                    type="radio"
-                                    name="uploadPath"
-                                    value={`${parentPath}/${item.name}`}
-                                    onChange={(e) => setUploadPath(e.target.value)}
-                                    className="ml-2"
-                                />
+                                
                             </summary>
                             <div>
                                 {renderTree(cache[`${parentPath}/${item.name}`] || [], `${parentPath}/${item.name}`)}

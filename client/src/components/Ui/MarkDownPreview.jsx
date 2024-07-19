@@ -6,7 +6,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import 'github-markdown-css/github-markdown.css';
 
-const FilePreview = ({ selectedFileContent }) => {
+const MarkDownPreview = ({ selectedFileContent }) => {
     const MarkdownComponents = {
         code({  inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
@@ -40,4 +40,4 @@ const FilePreview = ({ selectedFileContent }) => {
     );
 };
 
-export default FilePreview;
+export default MarkDownPreview;

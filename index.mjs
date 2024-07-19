@@ -5,7 +5,7 @@ import session from 'express-session';
 import { config } from 'dotenv';
 import githubRoutes from './routes/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
-
+import aiRoutes from './routes/aiRoutes.mjs'
 
 config(); // Load environment variables from .env file
 
@@ -48,6 +48,7 @@ app.get('/auth/github/callback',
     });
 
 app.use('/api', githubRoutes);
+app.use('/ai', aiRoutes);
 app.use( '/', clientRoutes);
 
 app.listen(port, () => {

@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import MainLibrary from './pages/MainLibrary';
 import LibraryDetails from './pages/LibraryDetails';
-
+import CustomizePrompt from './pages/CustomizePrompt';
 function App() {
   return (
     <Router>
@@ -13,6 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/mainlibrary" element={<MainLibrary />} />
         <Route path="/library/:repoName" element={<LibraryDetails />} />
+        <Route path="/customizeprompt" element={<CustomizePrompt />} />
       </Routes>
     </Router>
   );

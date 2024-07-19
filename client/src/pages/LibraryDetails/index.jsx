@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import FileTree from "./FileTree";
 import UploadFile from "./UploadFile";
 import CreateFolder from "./CreateFolder";
-import FilePreview from "./FilePreview";
+import MarkDownPreview from "../../components/Ui/MarkDownPreview";
 
 
 const LibraryDetails = () => {
@@ -80,7 +80,7 @@ const LibraryDetails = () => {
       </div>
       <div className="flex  bg-base-200 flex-1 h-screen overflow-y-scroll px-20">
         {selectedFileContent && (
-          <FilePreview selectedFileContent={selectedFileContent} />
+          <MarkDownPreview selectedFileContent={selectedFileContent} />
         )}
       </div>
       <div className="fixed w-full bottom-0">

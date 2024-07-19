@@ -4,8 +4,7 @@ import { ensureAuthenticated } from '../middleware/authMiddleware.mjs';
 import multer from 'multer';
 import { createFile } from '../helpers/aiHelper.mjs';
 import { createMarkdown } from '../helpers/helpers.mjs';
-import fs from 'fs';
-import path from 'path';
+
 
 const router = express.Router();
 const storage = multer.memoryStorage();

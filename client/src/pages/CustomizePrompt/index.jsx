@@ -1,8 +1,12 @@
 import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Bot from "/bot.svg";
 import MarkDownPreview from "../../components/Ui/MarkDownPreview";
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 export default function CustomizePrompt() {
+  const { repoName } = useParams();
+  const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState(null);
   const [promptExamples, setPromptExamples] = useState([
     "Example 1: Generate a list of potential business names.",
@@ -13,6 +17,7 @@ export default function CustomizePrompt() {
   ]);
   const [selectedExample, setSelectedExample] = useState("");
   const [selectedModel, setSelectedModel] = useState("");
+  const [instructionName, setInstructionName] = useState("");
   const [markdownContent, setMarkdownContent] = useState("");
 
   useEffect(() => {
@@ -35,7 +40,7 @@ export default function CustomizePrompt() {
     setSelectedModel(e.target.value);
   };
 
-  const handleSubmit = async (e) => {
+  const handleRunTest = async (e) => {
     e.preventDefault();
     if (!selectedFile || !selectedModel || !selectedExample) {
       alert("Please fill in all fields");
@@ -62,14 +67,57 @@ export default function CustomizePrompt() {
     }
   };
 
+  const handleSaveInstructions = async (e) => {
+    e.preventDefault();
+    if (!instructionName || !selectedModel || !selectedExample) {
+      alert("Please fill in all fields");
+      return;
+    }
+
+    const promptData = {
+      instructionName,
+      model: selectedModel,
+      instructions: selectedExample,
+      repoName, // Pass the repoName in the request
+    };
+
+    try {
+      const response = await fetch("/api/save-instructions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(promptData),
+      });
+
+      if (response.ok) {
+        console.log("Instructions saved successfully!");
+        // Redirect to the repository details page
+        navigate(`/library/${repoName}`);
+      } else {
+        console.error("Failed to save instructions");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
   return (
     <div className="flex bg-base-200/40 h-screen">
-      <div className="menu p-4 w-[40%] bg-base-100 border-r-2 border-black shadow-2xl ">
-        <h1 className="text-xl font-bold">Customize Prompt</h1>
-
-        <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
-          <div>
-            <img src={Bot} className="w-16" alt="Bot" />
+      <div className="p-4 w-[30%] bg-base-100 border-r-2 border-black shadow-2xl overflow-y-scroll">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate(-1)}
+            className="btn bg-base-100 border-0 shadow-none"
+          >
+            <ArrowLeftIcon className="w-10" />
+          </button>
+          <h1 className="text-xl font-bold">Customize Prompt</h1>
+        </div>
+        <form className="flex flex-col gap-4 mt-4">
+          <div className="items-center">
+            <img src={Bot} className="w-10 mb-2" alt="Bot" />
             <select
               className="select w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-xs"
               onChange={handleModelChange}
@@ -109,6 +157,16 @@ export default function CustomizePrompt() {
           </label>
 
           <label className="flex flex-col font-bold">
+            Instruction Name
+            <input
+              type="text"
+              className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-xs"
+              value={instructionName}
+              onChange={(e) => setInstructionName(e.target.value)}
+            />
+          </label>
+
+          <label className="flex flex-col font-bold">
             Instructions
             <textarea
               className="textarea w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-md h-[150px]"
@@ -117,9 +175,22 @@ export default function CustomizePrompt() {
               onChange={(e) => setSelectedExample(e.target.value)}
             />
           </label>
-          <button type="submit" className="btn btn-primary ">
-            Submit
-          </button>
+          <div className="flex w-full justify-between">
+            <button
+              type="button"
+              className="btn btn-accent"
+              onClick={handleSaveInstructions}
+            >
+              Save Instructions
+            </button>
+            <button
+              type="submit"
+              className="btn btn-primary"
+              onClick={handleRunTest}
+            >
+              Run Test
+            </button>
+          </div>
         </form>
       </div>
       <div className="flex bg-base-200 flex-1 h-screen overflow-y-scroll px-20">

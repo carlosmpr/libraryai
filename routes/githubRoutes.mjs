@@ -188,4 +188,78 @@ router.get('/repositories', ensureAuthenticated, async (req, res) => {
     }
 });
 
+
+// New route to save user instructions
+router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
+    const { instructionName, model, instructions, repoName } = req.body;
+    const token = req.user.accessToken;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        // Step 1: Check if the repository exists
+        try {
+            await octokit.rest.repos.get({
+                owner: req.user.profile.username,
+                repo: repoName,
+            });
+        } catch (repoError) {
+            // Step 2: Create the repository if it does not exist
+            if (repoError.status === 404) {
+                await octokit.rest.repos.createForAuthenticatedUser({
+                    name: repoName,
+                    private: true,
+                });
+            } else {
+                throw repoError;
+            }
+        }
+
+        let instructionsArray = [];
+        let sha;
+
+        try {
+            // Step 3: Fetch the current user-instructions.json file if it exists
+            const { data } = await octokit.rest.repos.getContent({
+                owner: req.user.profile.username,
+                repo: repoName, // Use the repoName from the request body
+                path: 'user-instructions.json',
+            });
+
+            // Decode the file content
+            const content = Buffer.from(data.content, 'base64').toString('utf8');
+            instructionsArray = JSON.parse(content);
+            sha = data.sha; // The blob SHA of the file being replaced
+        } catch (fileError) {
+            if (fileError.status !== 404) {
+                throw fileError;
+            }
+        }
+
+        // Step 4: Add the new instruction
+        instructionsArray.push({ id: instructionName, model, instructions });
+
+        // Encode the updated content
+        const updatedContent = Buffer.from(JSON.stringify(instructionsArray, null, 2)).toString('base64');
+
+        // Step 5: Create or update the file in the repository
+        await octokit.rest.repos.createOrUpdateFileContents({
+            owner: req.user.profile.username,
+            repo: repoName, // Use the repoName from the request body
+            path: 'user-instructions.json',
+            message: `Add new instruction: ${instructionName}`,
+            content: updatedContent,
+            sha: sha || undefined, // The blob SHA of the file being replaced, if it exists
+        });
+
+        res.json({ message: 'Instructions saved successfully!' });
+
+      
+    } catch (error) {
+        console.error('Error saving instructions:', error);
+        res.status(500).json({ error: 'Failed to save instructions' });
+    }
+});
+
+
+
 export default router;

@@ -44,7 +44,7 @@ app.get('/auth/github', passport.authenticate('github', { scope: ['repo'] }));
 app.get('/auth/github/callback', 
     passport.authenticate('github', { failureRedirect: '/login' }),
     (req, res) => {
-        res.redirect('/mainlibrary');
+        res.redirect('/library');
     });
 
 app.use('/api', githubRoutes);

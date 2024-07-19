@@ -11,9 +11,9 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/mainlibrary" element={<MainLibrary />} />
+        <Route path="/library" element={<MainLibrary />} />
         <Route path="/library/:repoName" element={<LibraryDetails />} />
-        <Route path="/customizeprompt" element={<CustomizePrompt />} />
+        <Route path="/library/:repoName/customizeprompt" element={<CustomizePrompt />} />
       </Routes>
     </Router>
   );

@@ -4,14 +4,20 @@ import FileTree from "./FileTree";
 import UploadFile from "./UploadFile";
 import CreateFolder from "./CreateFolder";
 import MarkDownPreview from "../../components/Ui/MarkDownPreview";
-
+import DownloadOptions from "./DownloadOptions";
+import CodeDownload from "./CodeDownload";
 
 const LibraryDetails = () => {
   const { repoName } = useParams();
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFileContent, setSelectedFileContent] = useState("");
+
   const [uploadPath, setUploadPath] = useState("");
+  const [downloadUrl, setDownloadUrl] = useState("");
+
+  console.log(selectedFileContent)
+  console.log(contents)
 
   const fetchContents = async (path = "") => {
     try {
@@ -57,6 +63,7 @@ const LibraryDetails = () => {
         const text = await response.text();
         console.log("Fetched Markdown Content:", text);
         setSelectedFileContent(text);
+        setDownloadUrl(file.download_url);
       } catch (error) {
         console.error("Failed to fetch file content", error);
       }
@@ -69,7 +76,7 @@ const LibraryDetails = () => {
 
   return (
     <div className="flex bg-base-200/40 h-screen">
-      <div className="menu p-4 w-[20%]  bg-base-100 border-r-2  border-black shadow-2xl">
+      <div className="menu p-4 w-[20%] bg-base-100 border-r-2 border-black shadow-2xl">
         <h1 className="text-xl mb-10 font-bold">{repoName}</h1>
         <FileTree
           contents={contents}
@@ -78,7 +85,7 @@ const LibraryDetails = () => {
           setUploadPath={setUploadPath}
         />
       </div>
-      <div className="flex  bg-base-200 flex-1 h-screen overflow-y-scroll px-20">
+      <div className="flex bg-base-200 flex-1 h-screen overflow-y-scroll px-20">
         {selectedFileContent && (
           <MarkDownPreview selectedFileContent={selectedFileContent} />
         )}
@@ -86,13 +93,17 @@ const LibraryDetails = () => {
       <div className="fixed w-full bottom-0">
         <div className="ml-[20%] flex w-full bg-base-100 p-4 mx-auto border-t-2 border-black gap-4">
           <CreateFolder repoName={repoName} loadContents={loadContents} />
-          
+
           <UploadFile
             repoName={repoName}
             loadContents={loadContents}
             uploadPath={uploadPath}
             contents={contents}
           />
+
+<DownloadOptions downloadUrl={downloadUrl} repoName={repoName} />
+
+<CodeDownload selectedFileContent={selectedFileContent} repoName={repoName} />
         </div>
       </div>
     </div>

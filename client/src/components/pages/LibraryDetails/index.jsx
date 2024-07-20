@@ -74,7 +74,7 @@ const LibraryDetails = () => {
   };
 
   if (loading) {
-    return <Skeleton />
+    return <Skeleton />;
   }
 
   return (

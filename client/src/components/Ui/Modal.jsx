@@ -1,31 +1,32 @@
 /* eslint-disable react/prop-types */
 import { useEffect } from 'react';
-import { PlusCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {  XMarkIcon } from '@heroicons/react/24/outline';
 
-const Modal = ({ modalId, title, description, children, triggerButtonLabel, triggerButtonClass, onClose }) => {
+const Modal = ({ modalId, title, description, children, isOpen, onClose,   }) => {
     useEffect(() => {
         const dialog = document.getElementById(modalId);
+
+        if (isOpen) {
+            dialog.showModal();
+        } else {
+            dialog.close();
+        }
+
         const handleClose = () => {
             if (onClose) {
                 onClose();
             }
         };
+
         dialog.addEventListener('close', handleClose);
 
         return () => {
             dialog.removeEventListener('close', handleClose);
         };
-    }, [modalId, onClose]);
+    }, [modalId, isOpen, onClose]);
 
     return (
         <>
-            <button
-                className={`btn ${triggerButtonClass} flex flex-col justify-center rounded-2xl`}
-                onClick={() => document.getElementById(modalId).showModal()}
-            >
-                <PlusCircleIcon className="w-10" />
-                <span>{triggerButtonLabel}</span>
-            </button>
             <dialog id={modalId} className="modal">
                 <div className="modal-box bg-base-200 border border-2 border-black shadow-2xl shadow-white/40">
                     <div className="text-center my-10 space-y-1">
@@ -34,9 +35,13 @@ const Modal = ({ modalId, title, description, children, triggerButtonLabel, trig
                     </div>
                     {children}
                     <div className="modal-action">
-                        <form method="dialog" className="absolute top-5 left-0">
-                            <button className=""><XMarkIcon className="w-6" /></button>
-                        </form>
+                        <button
+                            type="button"
+                            className="absolute top-5 left-0"
+                            onClick={onClose}
+                        >
+                            <XMarkIcon className="w-6" />
+                        </button>
                     </div>
                 </div>
             </dialog>

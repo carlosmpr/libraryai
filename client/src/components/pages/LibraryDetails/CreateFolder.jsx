@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
-import Modal from '../../components/Ui/Modal';
+import Modal from '../../ui/Modal';
 
 const CreateFolder = ({ repoName, loadContents }) => {
     const [newFolderName, setNewFolderName] = useState('');

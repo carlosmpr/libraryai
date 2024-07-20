@@ -3,11 +3,12 @@ import { Link, useParams, useLocation } from "react-router-dom";
 import FileTree from "./FileTree";
 import UploadFile from "./UploadFile";
 import CreateFolder from "./CreateFolder";
-import MarkDownPreview from "../../components/Ui/MarkDownPreview";
+import MarkDownPreview from "../../ui/MarkDownPreview";
 import DownloadOptions from "./DownloadOptions";
 import CodeDownload from "./CodeDownload";
-import Breadcrumbs from "../../components/Ui/BreadCrumbs";
+import Breadcrumbs from "../../ui/BreadCrumbs";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
+import Skeleton from "../../ui/Skeleton";
 
 const LibraryDetails = () => {
   const { repoName } = useParams();
@@ -15,7 +16,6 @@ const LibraryDetails = () => {
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFileContent, setSelectedFileContent] = useState("");
-
   const [uploadPath, setUploadPath] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
 
@@ -74,7 +74,7 @@ const LibraryDetails = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Skeleton />
   }
 
   return (

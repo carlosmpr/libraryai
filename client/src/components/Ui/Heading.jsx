@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import FadeInTransition from "../Animations/FadeTransition";
+import FadeInTransition from '../animations/FadeTransition'
 
 
 export default function Heading({

@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Bot from "/bot.svg";
-import MarkDownPreview from "../../components/Ui/MarkDownPreview";
+import MarkDownPreview from '../../ui/MarkDownPreview';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import LoadingIndicator from "../../ui/LoadingIndiicator";
+import useLoadingIndicator from "../../hooks/useLoadingIndicator";
 
 export default function CustomizePrompt() {
   const { repoName } = useParams();
   const navigate = useNavigate();
+  const { isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedFile, setSelectedFile] = useState(null);
   const [promptExamples, setPromptExamples] = useState([
     "Example 1: Generate a list of potential business names.",
@@ -21,7 +24,6 @@ export default function CustomizePrompt() {
   const [markdownContent, setMarkdownContent] = useState("");
 
   useEffect(() => {
-    // Set a default file (base64 string of an image or placeholder)
     setSelectedFile("data:image/png;base64, ...");
   }, []);
 
@@ -67,8 +69,7 @@ export default function CustomizePrompt() {
     }
   };
 
-  const handleSaveInstructions = async (e) => {
-    e.preventDefault();
+  const handleSaveInstructions = async () => {
     if (!instructionName || !selectedModel || !selectedExample) {
       alert("Please fill in all fields");
       return;
@@ -78,26 +79,24 @@ export default function CustomizePrompt() {
       instructionName,
       model: selectedModel,
       instructions: selectedExample,
-      repoName, // Pass the repoName in the request
+      repoName,
     };
 
     try {
-      const response = await fetch("/api/save-instructions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(promptData),
-      });
+      await handleLoading(async () => {
+        const response = await fetch("/api/save-instructions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(promptData),
+        });
 
-      if (response.ok) {
-        console.log("Instructions saved successfully!");
-        // Redirect to the repository details page
-        navigate(`/library/${repoName}`);
-      } else {
-        console.error("Failed to save instructions");
-      }
+        if (!response.ok) {
+          throw new Error("Failed to save instructions");
+        }
+      });
     } catch (error) {
       console.error("Error:", error);
     }
@@ -115,6 +114,16 @@ export default function CustomizePrompt() {
           </button>
           <h1 className="text-xl font-bold">Customize Prompt</h1>
         </div>
+        <LoadingIndicator
+          isLoading={isLoading}
+          isSuccess={isSuccess}
+          isError={isError}
+          successMessage="Instructions saved successfully!"
+          errorMessage="Failed to save instructions."
+          onSuccess={() => navigate(`/library/${repoName}`)}
+        >
+          <div></div> {/* Empty div to keep the loading state functionality */}
+        </LoadingIndicator>
         <form className="flex flex-col gap-4 mt-4">
           <div className="items-center">
             <img src={Bot} className="w-10 mb-2" alt="Bot" />

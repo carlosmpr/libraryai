@@ -1,10 +1,10 @@
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import Login from './pages/Login';
-import MainLibrary from './pages/MainLibrary';
-import LibraryDetails from './pages/LibraryDetails';
-import CustomizePrompt from './pages/CustomizePrompt';
+import Home from './components/pages/Home';
+import Login from './components/pages/Login'
+import MainLibrary from './components/pages/MainLibrary';
+import LibraryDetails from './components/pages/LibraryDetails'
+import CustomizePrompt from './components/pages/CustomizePrompt'
 function App() {
   return (
     <Router>

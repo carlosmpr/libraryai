@@ -5,13 +5,14 @@ import MarkDownPreview from '../../ui/MarkDownPreview';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import LoadingIndicator from "../../ui/LoadingIndiicator";
 import useLoadingIndicator from "../../hooks/useLoadingIndicator";
+import Modal from "../../ui/Modal";
 
 export default function CustomizePrompt() {
   const { repoName } = useParams();
   const navigate = useNavigate();
-  const { isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
+  const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen } = useLoadingIndicator();
   const [selectedFile, setSelectedFile] = useState(null);
-  const [promptExamples, setPromptExamples] = useState([
+  const [promptExamples] = useState([
     "Example 1: Generate a list of potential business names.",
     "Example 2: Write a short story about a space adventure.",
     "Example 3: Explain the significance of the Turing test.",
@@ -22,6 +23,7 @@ export default function CustomizePrompt() {
   const [selectedModel, setSelectedModel] = useState("");
   const [instructionName, setInstructionName] = useState("");
   const [markdownContent, setMarkdownContent] = useState("");
+  const [currentAction, setCurrentAction] = useState("");
 
   useEffect(() => {
     setSelectedFile("data:image/png;base64, ...");
@@ -44,8 +46,12 @@ export default function CustomizePrompt() {
 
   const handleRunTest = async (e) => {
     e.preventDefault();
+    setCurrentAction("runTest");
+    setIsModalOpen(true);
+
     if (!selectedFile || !selectedModel || !selectedExample) {
       alert("Please fill in all fields");
+      setIsModalOpen(false);
       return;
     }
 
@@ -55,23 +61,33 @@ export default function CustomizePrompt() {
     formData.append("instructions", selectedExample);
 
     try {
-      const response = await fetch("/ai/test-prompt", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+      await handleLoading(async () => {
+        const response = await fetch("/ai/test-prompt", {
+          method: "POST",
+          credentials: "include",
+          body: formData,
+        });
 
-      const result = await response.json();
-      console.log("Prompt Result:", result.data.prompt);
-      setMarkdownContent(result.data.prompt);
+        if (!response.ok) {
+          throw new Error("Failed to run test");
+        }
+
+        const result = await response.json();
+        console.log("Prompt Result:", result.data.prompt);
+        setMarkdownContent(result.data.prompt);
+      });
     } catch (error) {
       console.error("Error:", error);
     }
   };
 
   const handleSaveInstructions = async () => {
+    setCurrentAction("saveInstructions");
+    setIsModalOpen(true);
+
     if (!instructionName || !selectedModel || !selectedExample) {
       alert("Please fill in all fields");
+      setIsModalOpen(false);
       return;
     }
 
@@ -104,6 +120,30 @@ export default function CustomizePrompt() {
 
   return (
     <div className="flex bg-base-200/40 h-screen">
+      <Modal
+        modalId="loading_modal"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Processing"
+        description="Please wait while we process your request."
+      >
+        <LoadingIndicator
+          isLoading={isLoading}
+          isSuccess={isSuccess}
+          isError={isError}
+          successMessage="Operation completed successfully!"
+          errorMessage="An error occurred."
+          onSuccess={() => {
+            setIsModalOpen(false);
+            if (currentAction === "saveInstructions") {
+              navigate(`/library/${repoName}`);
+            }
+          }}
+        >
+          <div></div> {/* Empty div to keep the loading state functionality */}
+        </LoadingIndicator>
+      </Modal>
+
       <div className="p-4 w-[30%] bg-base-100 border-r-2 border-black shadow-2xl overflow-y-scroll">
         <div className="flex items-center">
           <button
@@ -114,16 +154,7 @@ export default function CustomizePrompt() {
           </button>
           <h1 className="text-xl font-bold">Customize Prompt</h1>
         </div>
-        <LoadingIndicator
-          isLoading={isLoading}
-          isSuccess={isSuccess}
-          isError={isError}
-          successMessage="Instructions saved successfully!"
-          errorMessage="Failed to save instructions."
-          onSuccess={() => navigate(`/library/${repoName}`)}
-        >
-          <div></div> {/* Empty div to keep the loading state functionality */}
-        </LoadingIndicator>
+
         <form className="flex flex-col gap-4 mt-4">
           <div className="items-center">
             <img src={Bot} className="w-10 mb-2" alt="Bot" />

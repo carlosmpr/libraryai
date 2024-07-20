@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 
-const CodeDownload = ({ selectedFileContent, repoName }) => {
+const CodeDownload = ({ selectedFileContent }) => {
   const extractCodeBlocks = (markdownContent) => {
     const titleMatch = markdownContent.match(/title:\s*'([^']+)'/);
     const title = titleMatch ? titleMatch[1] : "code";

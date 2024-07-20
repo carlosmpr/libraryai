@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
-import Modal from '../../ui/Modal';
-import LoadingIndicator from '../../ui/LoadingIndiicator';
+import Modal from '../../../ui/Modal';
+import LoadingIndicator from '../../../ui/LoadingIndiicator';
 
 const LoadingModal = ({ isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, successMessage, errorMessage, onSuccess }) => {
   return (

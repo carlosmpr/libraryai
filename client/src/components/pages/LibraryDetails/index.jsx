@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link, useParams, useLocation } from "react-router-dom";
-import FileTree from "./FileTree";
-import UploadFile from "./UploadFile";
-import CreateFolder from "./CreateFolder";
+import FileTree from "./components/FileTree";
+import UploadFile from "./components/UploadFile";
+import CreateFolder from "./components/CreateFolder";
 import MarkDownPreview from "../../ui/MarkDownPreview";
-import DownloadOptions from "./DownloadOptions";
-import CodeDownload from "./CodeDownload";
+import DownloadOptions from "./components/DownloadOptions";
+import CodeDownload from "./components/CodeDownload";
 import Breadcrumbs from "../../ui/BreadCrumbs";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import Skeleton from "../../ui/Skeleton";

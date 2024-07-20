@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Modal from "../../../ui/Modal";
+import Modal from "../../../../ui/Modal";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import LoadingIndicator from "../../../ui/LoadingIndiicator";
-import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
+import LoadingIndicator from "../../../../ui/LoadingIndiicator";
+import useLoadingIndicator from "../../../../hooks/useLoadingIndicator";
 import UploadForm from "./UploadForm";
 
 const UploadFile = ({ repoName, loadContents, contents }) => {

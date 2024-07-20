@@ -112,6 +112,7 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
     setSelectedFiles([]);
     setError("");
     setUploadPath("");
+    setIsModalOpen(false)
    
   };
 

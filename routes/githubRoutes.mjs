@@ -189,17 +189,49 @@ router.get('/repositories', ensureAuthenticated, async (req, res) => {
 });
 
 
+router.get('/get-instructions', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const githubUsername = req.user.profile.username;
+    const repoName = `library-${githubUsername}-config`;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        // Fetch the user-instructions.json file from the config repository
+        const { data } = await octokit.rest.repos.getContent({
+            owner: githubUsername,
+            repo: repoName,
+            path: 'user-instructions.json',
+        });
+
+        // Decode the file content
+        const content = Buffer.from(data.content, 'base64').toString('utf8');
+        const instructions = JSON.parse(content);
+
+        res.json({ instructions });
+    } catch (error) {
+        if (error.status === 404) {
+            // If the file or repo does not exist, return an empty array
+            res.json({ instructions: [] });
+        } else {
+            console.error('Error fetching instructions:', error);
+            res.status(500).json({ error: 'Failed to fetch instructions' });
+        }
+    }
+});
+
 // New route to save user instructions
 router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
-    const { instructionName, model, instructions, repoName } = req.body;
+    const { instructionName, model, instructions } = req.body;
     const token = req.user.accessToken;
+    const githubUsername = req.user.profile.username;
+    const repoName = `library-${githubUsername}-config`;
     const octokit = new Octokit({ auth: token });
 
     try {
         // Step 1: Check if the repository exists
         try {
             await octokit.rest.repos.get({
-                owner: req.user.profile.username,
+                owner: githubUsername,
                 repo: repoName,
             });
         } catch (repoError) {
@@ -220,8 +252,8 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
         try {
             // Step 3: Fetch the current user-instructions.json file if it exists
             const { data } = await octokit.rest.repos.getContent({
-                owner: req.user.profile.username,
-                repo: repoName, // Use the repoName from the request body
+                owner: githubUsername,
+                repo: repoName,
                 path: 'user-instructions.json',
             });
 
@@ -243,8 +275,8 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
 
         // Step 5: Create or update the file in the repository
         await octokit.rest.repos.createOrUpdateFileContents({
-            owner: req.user.profile.username,
-            repo: repoName, // Use the repoName from the request body
+            owner: githubUsername,
+            repo: repoName,
             path: 'user-instructions.json',
             message: `Add new instruction: ${instructionName}`,
             content: updatedContent,
@@ -253,13 +285,11 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
 
         res.json({ message: 'Instructions saved successfully!' });
 
-      
     } catch (error) {
         console.error('Error saving instructions:', error);
         res.status(500).json({ error: 'Failed to save instructions' });
     }
 });
-
 
 
 export default router;

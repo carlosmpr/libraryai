@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { Link, useParams, useLocation } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import FileTree from "./components/FileTree";
 import UploadFile from "./components/UploadFile";
 import CreateFolder from "./components/CreateFolder";
@@ -12,14 +12,7 @@ import Skeleton from "../../ui/Skeleton";
 import { LibraryProvider, useLibrary } from "./context/LibraryContext";
 
 const LibraryDetailsContent = () => {
-  const {
-    repoName,
-    loading,
-    selectedFileContent,
-    downloadUrl,
-   
-  } = useLibrary();
-  const location = useLocation();
+  const { repoName, loading, selectedFileContent, downloadUrl } = useLibrary();
 
   if (loading) {
     return <Skeleton />;
@@ -48,7 +41,7 @@ const LibraryDetailsContent = () => {
           <CodeDownload selectedFileContent={selectedFileContent} />
 
           <Link
-            to={`${location.pathname}/customizeprompt`}
+            to={`/customizeprompt`}
             className="btn border-2 justify-center rounded-2xl"
           >
             <Cog6ToothIcon className="w-8" />

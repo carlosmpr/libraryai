@@ -34,7 +34,7 @@ router.get('/library/:repoName', ensureAuthenticated, (req, res) => {
 
 
 
-router.get('/library/:repoName/customizeprompt', ensureAuthenticated, (req, res) => {
+router.get('/customizeprompt', ensureAuthenticated, (req, res) => {
     console.log('Serving library page');
     res.sendFile(path.join(distPath, 'index.html'));
 });

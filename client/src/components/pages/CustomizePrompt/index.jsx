@@ -20,7 +20,6 @@ export default function CustomizePrompt() {
     handleSaveInstructions,
     currentAction,
     navigate,
-    repoName,
   } = usePromptForm();
 
   return (
@@ -36,7 +35,7 @@ export default function CustomizePrompt() {
         onSuccess={() => {
           setIsModalOpen(false);
           if (currentAction === "saveInstructions") {
-            navigate(`/library/${repoName}`);
+            navigate(-1);
           }
         }}
       />

@@ -13,7 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/library" element={<MainLibrary />} />
         <Route path="/library/:repoName" element={<LibraryDetails />} />
-        <Route path="/library/:repoName/customizeprompt" element={<CustomizePrompt />} />
+        <Route path="/customizeprompt" element={<CustomizePrompt />} />
       </Routes>
     </Router>
   );

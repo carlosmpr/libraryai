@@ -1,16 +1,16 @@
-/* eslint-disable react/prop-types */
 import { useState } from "react";
 import Modal from "../../../../ui/Modal";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import LoadingIndicator from "../../../../ui/LoadingIndiicator";
 import useLoadingIndicator from "../../../../hooks/useLoadingIndicator";
 import UploadForm from "./UploadForm";
-import DirView from "./DirView"; // Import DirView component
+import DirView from "./DirView";
+import { useLibrary } from "../../context/LibraryContext";
 
-const UploadFile = ({ repoName, loadContents, contents, fetchContents }) => {
+const UploadFile = () => {
+  const { repoName, loadContents, uploadPath,setUploadPath } = useLibrary();
   const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const [uploadPath, setUploadPath] = useState("");
   const [newDirectory, setNewDirectory] = useState("");
   const [error, setError] = useState("");
 
@@ -85,13 +85,11 @@ const UploadFile = ({ repoName, loadContents, contents, fetchContents }) => {
             setError={setError}
             error={error}
             handleClearFiles={handleClearFiles}
-            uploadPath={uploadPath}
-            setUploadPath={setUploadPath}
             handleSubmit={handleSubmit}
             isLoading={isLoading}
             newDirectory={newDirectory}
             setNewDirectory={setNewDirectory}
-            dirView={<DirView contents={contents} fetchContents={fetchContents} setUploadPath={setUploadPath} />}
+            dirView={<DirView />}
           />
         </LoadingIndicator>
       </Modal>

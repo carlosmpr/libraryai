@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
+import { useLibrary } from '../../context/LibraryContext';
 
-const DirView = ({ contents, fetchContents, setUploadPath }) => {
+const DirView = () => {
+  const { contents, fetchContents, setUploadPath } = useLibrary();
   const [openFolders, setOpenFolders] = useState({});
   const [cache, setCache] = useState({});
 

@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import FileDropZone from "./FileDropZone";
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { useLibrary } from "../../context/LibraryContext";
 
 const UploadForm = ({
   selectedFiles,
@@ -8,14 +9,14 @@ const UploadForm = ({
   setError,
   error,
   handleClearFiles,
-  uploadPath,
-  setUploadPath,
   handleSubmit,
   isLoading,
   newDirectory,
   setNewDirectory,
   dirView,
 }) => {
+  const { uploadPath, setUploadPath } = useLibrary();
+
   return (
     <form onSubmit={handleSubmit} className="flex gap-10">
       <div className="relative">

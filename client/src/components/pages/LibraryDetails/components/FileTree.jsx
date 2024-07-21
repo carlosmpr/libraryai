@@ -1,8 +1,10 @@
 /* eslint-disable react/prop-types */
 import { useState } from 'react';
 import { FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
+import { useLibrary } from '../context/LibraryContext';
 
-const FileTree = ({ contents, handleFileClick, fetchContents, setUploadPath }) => {
+const FileTree = () => {
+  const { contents, fetchContents, setUploadPath, handleFileClick } = useLibrary();
   const [openFolders, setOpenFolders] = useState({});
   const [cache, setCache] = useState({});
 
@@ -26,7 +28,7 @@ const FileTree = ({ contents, handleFileClick, fetchContents, setUploadPath }) =
   };
 
   const renderTree = (items, parentPath = '') => (
-    <ul className=" rounded-lg w-full">
+    <ul className="rounded-lg w-full">
       {items.map((item) => (
         <li key={item.path}>
           {item.type === 'dir' ? (

@@ -12,15 +12,12 @@ import Skeleton from "../../ui/Skeleton";
 
 const LibraryDetails = () => {
   const { repoName } = useParams();
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFileContent, setSelectedFileContent] = useState("");
   const [uploadPath, setUploadPath] = useState("");
   const [downloadUrl, setDownloadUrl] = useState("");
-
-  console.log(selectedFileContent);
-  console.log(contents);
 
   const fetchContents = async (path = "") => {
     try {
@@ -64,7 +61,6 @@ const LibraryDetails = () => {
       try {
         const response = await fetch(file.download_url);
         const text = await response.text();
-        console.log("Fetched Markdown Content:", text);
         setSelectedFileContent(text);
         setDownloadUrl(file.download_url);
       } catch (error) {
@@ -80,7 +76,7 @@ const LibraryDetails = () => {
   return (
     <>
       <div className="flex bg-base-200/40 h-screen">
-        <div className="menu p-4 w-[20%] bg-base-100 border-r-2 border-black shadow-2xl">
+        <div className="p-4 w-[20%] bg-base-100 border-r-2 border-black shadow-2xl overflow-y-scroll">
           <h1 className="text-xl mb-10 font-bold">{repoName}</h1>
           <FileTree
             contents={contents}
@@ -104,6 +100,7 @@ const LibraryDetails = () => {
               loadContents={loadContents}
               uploadPath={uploadPath}
               contents={contents}
+              fetchContents={fetchContents}
             />
 
             <DownloadOptions downloadUrl={downloadUrl} repoName={repoName} />
@@ -114,7 +111,7 @@ const LibraryDetails = () => {
             />
 
             <Link
-              to={`${location.pathname}/customizeprompt`} // Construct the path dynamically
+              to={`${location.pathname}/customizeprompt`}
               className="btn border-2 justify-center rounded-2xl"
             >
               <Cog6ToothIcon className="w-8" />

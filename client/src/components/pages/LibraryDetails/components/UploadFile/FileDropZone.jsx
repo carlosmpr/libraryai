@@ -74,7 +74,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="p-4 flex-1 border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer mb-4 h-[400px] flex overflow-y-scroll items-center justify-center"
+      className="p-4 border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer mb-4 h-[400px]  w-[400px] flex overflow-y-scroll items-center justify-center"
     >
       <input
         type="file"
@@ -84,9 +84,9 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         id="fileUpload"
         multiple
       />
-      <label htmlFor="fileUpload" className="cursor-pointer">
+      <label htmlFor="fileUpload" className="cursor-pointer ">
         {selectedFiles.length > 0 ? (
-          <div className="flex flex-wrap gap-10 ">
+          <div className="flex flex-wrap gap-10  ">
             {selectedFiles.map((file) => (
               <div key={file.name}>
                 <DocumentTextIcon className="mx-auto w-8" />

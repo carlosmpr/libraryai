@@ -10,15 +10,16 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
   const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploadPath, setUploadPath] = useState("");
+  const [newDirectory, setNewDirectory] = useState(""); // New state for the new directory input
   const [error, setError] = useState("");
 
   const handleFileUpload = async () => {
-    if (selectedFiles.length === 0 || !uploadPath) return;
+    if (selectedFiles.length === 0 || (!uploadPath && !newDirectory)) return;
 
     const formData = new FormData();
     selectedFiles.forEach((file) => formData.append("files", file));
     formData.append("repository", repoName);
-    formData.append("path", uploadPath);
+    formData.append("path", newDirectory || uploadPath); // Use newDirectory if it's set
 
     const response = await fetch("/api/upload-file", {
       method: "POST",
@@ -43,7 +44,8 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
     setSelectedFiles([]);
     setError("");
     setUploadPath("");
- 
+    setNewDirectory(""); // Reset new directory input
+    setIsModalOpen(false);
   };
 
   const handleClearFiles = () => {
@@ -66,6 +68,7 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
         description="Select a file to upload to the repository."
         isOpen={isModalOpen}
         onClose={handleModalClose}
+        customStyle="w-[80%] h-[90%] p-10 rounded-2xl "
       >
         <LoadingIndicator
           isLoading={isLoading}
@@ -74,7 +77,7 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
           successMessage="File uploaded successfully!"
           errorMessage="Failed to upload file."
           onSuccess={() => {
-           loadContents()
+            loadContents();
           }}
         >
           <UploadForm
@@ -86,6 +89,8 @@ const UploadFile = ({ repoName, loadContents, contents }) => {
             contents={contents}
             uploadPath={uploadPath}
             setUploadPath={setUploadPath}
+            newDirectory={newDirectory} // Pass new directory state
+            setNewDirectory={setNewDirectory} // Pass setter for new directory
             handleSubmit={handleSubmit}
             isLoading={isLoading}
           />

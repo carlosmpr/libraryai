@@ -6,7 +6,7 @@ const InstructionsContext = createContext();
 export const useInstructions = () => useContext(InstructionsContext);
 
 export const InstructionsProvider = ({ children }) => {
-  const [instructions, setInstructions] = useState([]);
+  const [userInstructions, setUserInstructions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ export const InstructionsProvider = ({ children }) => {
         });
         if (response.ok) {
           const data = await response.json();
-          setInstructions(data.instructions);
+          setUserInstructions(data.instructions);
         } else {
           console.error('Failed to fetch instructions');
         }
@@ -32,9 +32,9 @@ export const InstructionsProvider = ({ children }) => {
 
     fetchInstructions();
   }, []);
-  console.log(instructions)
+
   return (
-    <InstructionsContext.Provider value={{ instructions, loading }}>
+    <InstructionsContext.Provider value={{ userInstructions, loading, setUserInstructions }}>
       {children}
     </InstructionsContext.Provider>
   );

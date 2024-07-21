@@ -15,7 +15,7 @@ const UploadFile = () => {
   const [newDirectory, setNewDirectory] = useState("");
   const [error, setError] = useState("");
   const [selectedInstruction, setSelectedInstruction] = useState("");
-  const { instructions } = useInstructions();
+  const { userInstructions } = useInstructions();
 
   const handleFileUpload = async () => {
     if (selectedFiles.length === 0 || !(uploadPath || newDirectory)) return;
@@ -26,7 +26,7 @@ const UploadFile = () => {
     formData.append("path", uploadPath || newDirectory);
 
     if (selectedInstruction) {
-      const instruction = instructions.find(inst => inst.id === selectedInstruction);
+      const instruction = userInstructions.find(inst => inst.id === selectedInstruction);
       formData.append("instructionName", instruction.id);
       formData.append("model", instruction.model);
       formData.append("instructions", instruction.instructions);
@@ -80,7 +80,7 @@ const UploadFile = () => {
         description="Select a file to upload to the repository."
         isOpen={isModalOpen}
         onClose={handleModalClose}
-        customStyle="w-[80%] h-[90%] p-10 rounded-2xl"
+        customStyle="w-[1050px] h-[90%] p-10 rounded-2xl"
       >
         <LoadingIndicator
           isLoading={isLoading}

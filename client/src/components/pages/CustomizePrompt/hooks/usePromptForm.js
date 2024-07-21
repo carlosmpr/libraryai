@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
-
+import { useInstructions } from "../../../context/UserInstructions";
 
 const usePromptForm = () => {
   const { repoName } = useParams();
@@ -16,6 +16,7 @@ const usePromptForm = () => {
   });
   const [markdownContent, setMarkdownContent] = useState("");
   const [currentAction, setCurrentAction] = useState("");
+  const { userInstructions, setUserInstructions } = useInstructions();
 
   const promptExamples = [
     "Write a detail step by step of the code",
@@ -66,6 +67,8 @@ const usePromptForm = () => {
           body: formData,
         });
 
+   
+
         if (!response.ok) {
           throw new Error("Failed to run test");
         }
@@ -108,7 +111,8 @@ const usePromptForm = () => {
           body: JSON.stringify(promptData),
         });
 
-        
+        setUserInstructions([...userInstructions, {id:instructionName,  model: selectedModel,
+          instructions: selectedExample}])
         if (!response.ok) {
           throw new Error("Failed to save instructions");
         }

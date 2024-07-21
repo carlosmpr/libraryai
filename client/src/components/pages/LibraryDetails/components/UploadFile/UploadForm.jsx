@@ -19,11 +19,11 @@ const UploadForm = ({
   dirView,
 }) => {
   const { uploadPath, setUploadPath } = useLibrary();
-  const { instructions, loading } = useInstructions();
+  const { userInstructions, loading } = useInstructions();
 
   return (
-    <form onSubmit={handleSubmit} className="flex gap-10">
-      <div className="relative">
+    <form onSubmit={handleSubmit} className="flex gap-10 justify-evenly">
+      <div className="relative flex-1">
         <FileDropZone
           selectedFiles={selectedFiles}
           setSelectedFiles={setSelectedFiles}
@@ -37,7 +37,7 @@ const UploadForm = ({
           <ArrowPathIcon className="w-6" />
         </button>
       </div>
-      <div className="w-[45%]">
+      <div className="w-[35%]">
         {error && <p className="text-red-500">{error}</p>}
 
         <div className="mb-4">
@@ -63,10 +63,10 @@ const UploadForm = ({
         </div>
 
         {!loading && (
-          <div className="mb-4">
+          <div className="mb-4 w-full">
             <h3>Select Custom Prompt Instruction:</h3>
-            <div className="flex flex-wrap gap-2">
-              {instructions.map((instruction) => (
+            <div className="flex overflow-x-scroll gap-2 w-full">
+              {userInstructions.map((instruction) => (
                 <button
                   key={instruction.id}
                   type="button"
@@ -88,7 +88,7 @@ const UploadForm = ({
           {isLoading ? "Uploading..." : "Upload File"}
         </button>
       </div>
-      <div className="w-[45%]">
+      <div className="flex flex-col flex-1">
         <h3>Directory Tree:</h3>
         {dirView}
       </div>

@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 
+
 const usePromptForm = () => {
   const { repoName } = useParams();
+
   const navigate = useNavigate();
   const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen } = useLoadingIndicator();
   const [formState, setFormState] = useState({
@@ -16,11 +18,10 @@ const usePromptForm = () => {
   const [currentAction, setCurrentAction] = useState("");
 
   const promptExamples = [
-    "Example 1: Generate a list of potential business names.",
-    "Example 2: Write a short story about a space adventure.",
-    "Example 3: Explain the significance of the Turing test.",
-    "Example 4: Provide a summary of the latest trends in artificial intelligence.",
-    "Example 5: Generate a list of questions for a product user interview.",
+    "Write a detail step by step of the code",
+    "Write the Md File in Spanish",
+    "Write 5 example of using this component",
+    "Write the Code with Typescript and explain the new addition",
   ];
 
   const handleInputChange = (e) => {
@@ -107,6 +108,7 @@ const usePromptForm = () => {
           body: JSON.stringify(promptData),
         });
 
+        
         if (!response.ok) {
           throw new Error("Failed to save instructions");
         }

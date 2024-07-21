@@ -6,6 +6,7 @@ import useLoadingIndicator from "../../../../hooks/useLoadingIndicator";
 import UploadForm from "./UploadForm";
 import DirView from "./DirView";
 import { useLibrary } from "../../context/LibraryContext";
+import { useInstructions } from "../../../../context/UserInstructions";
 
 const UploadFile = () => {
   const { repoName, loadContents, uploadPath,setUploadPath } = useLibrary();
@@ -13,6 +14,8 @@ const UploadFile = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [newDirectory, setNewDirectory] = useState("");
   const [error, setError] = useState("");
+  const [selectedInstruction, setSelectedInstruction] = useState("");
+  const { instructions } = useInstructions();
 
   const handleFileUpload = async () => {
     if (selectedFiles.length === 0 || !(uploadPath || newDirectory)) return;
@@ -21,6 +24,13 @@ const UploadFile = () => {
     selectedFiles.forEach((file) => formData.append("files", file));
     formData.append("repository", repoName);
     formData.append("path", uploadPath || newDirectory);
+
+    if (selectedInstruction) {
+      const instruction = instructions.find(inst => inst.id === selectedInstruction);
+      formData.append("instructionName", instruction.id);
+      formData.append("model", instruction.model);
+      formData.append("instructions", instruction.instructions);
+    }
 
     const response = await fetch("/api/upload-file", {
       method: "POST",
@@ -47,6 +57,7 @@ const UploadFile = () => {
     setUploadPath("");
     setNewDirectory("");
     setIsModalOpen(false);
+    setSelectedInstruction("");
   };
 
   const handleClearFiles = () => {
@@ -89,6 +100,8 @@ const UploadFile = () => {
             isLoading={isLoading}
             newDirectory={newDirectory}
             setNewDirectory={setNewDirectory}
+            selectedInstruction={selectedInstruction}
+            setSelectedInstruction={setSelectedInstruction}
             dirView={<DirView />}
           />
         </LoadingIndicator>

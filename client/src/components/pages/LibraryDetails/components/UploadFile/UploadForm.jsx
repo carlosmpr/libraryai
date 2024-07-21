@@ -2,6 +2,7 @@
 import FileDropZone from "./FileDropZone";
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useLibrary } from "../../context/LibraryContext";
+import { useInstructions } from "../../../../context/UserInstructions";
 
 const UploadForm = ({
   selectedFiles,
@@ -13,9 +14,12 @@ const UploadForm = ({
   isLoading,
   newDirectory,
   setNewDirectory,
+  selectedInstruction,
+  setSelectedInstruction,
   dirView,
 }) => {
   const { uploadPath, setUploadPath } = useLibrary();
+  const { instructions, loading } = useInstructions();
 
   return (
     <form onSubmit={handleSubmit} className="flex gap-10">
@@ -57,6 +61,24 @@ const UploadForm = ({
             className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
           />
         </div>
+
+        {!loading && (
+          <div className="mb-4">
+            <h3>Select Custom Prompt Instruction:</h3>
+            <div className="flex flex-wrap gap-2">
+              {instructions.map((instruction) => (
+                <button
+                  key={instruction.id}
+                  type="button"
+                  className={`btn ${selectedInstruction === instruction.id ? "btn-primary" : "btn-secondary"}`}
+                  onClick={() => setSelectedInstruction(instruction.id)}
+                >
+                  {instruction.id}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <button
           type="submit"

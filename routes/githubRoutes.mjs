@@ -134,7 +134,7 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
         return res.status(400).send('No files uploaded.');
     }
 
-    const { repository, path: uploadPath } = req.body;
+    const { repository, path: uploadPath, model, instructions } = req.body;
     const token = req.user.accessToken;
     const octokit = new Octokit({ auth: token });
 
@@ -143,7 +143,7 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
 
         for (const file of req.files) {
             const content = file.buffer.toString('utf8');
-            const completion = await createFile(content);
+            const completion = await createFile(content, model, instructions);
             const explanation = completion.text;
             const markdownContent = createMarkdown(file.originalname, explanation, content);
 
@@ -170,6 +170,7 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
         res.status(500).send('Failed to upload files');
     }
 });
+
 router.get('/repositories', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
 

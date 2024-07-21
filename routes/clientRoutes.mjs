@@ -15,7 +15,7 @@ const distPath = path.join(__dirname, '../dist');
 router.get('/', (req, res) => {
     console.log('Root route accessed. User isAuthenticated:', req.isAuthenticated());
     if (req.isAuthenticated()) {
-        return res.redirect('/mainlibrary');
+        return res.redirect('/library');
     }
     res.sendFile(path.join(distPath, 'index.html'));
 });

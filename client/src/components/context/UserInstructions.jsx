@@ -33,6 +33,8 @@ export const InstructionsProvider = ({ children }) => {
     fetchInstructions();
   }, []);
 
+console.log(userInstructions)
+
   return (
     <InstructionsContext.Provider value={{ userInstructions, loading, setUserInstructions }}>
       {children}

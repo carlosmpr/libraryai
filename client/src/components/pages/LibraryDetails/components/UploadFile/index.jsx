@@ -27,7 +27,7 @@ const UploadFile = () => {
 
     if (selectedInstruction) {
       const instruction = userInstructions.find(inst => inst.id === selectedInstruction);
-      formData.append("instructionName", instruction.id);
+      formData.append("instructionName", instruction.name);
       formData.append("model", instruction.model);
       formData.append("instructions", instruction.instructions);
     }

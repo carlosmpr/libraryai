@@ -41,6 +41,15 @@ router.get('/customizeprompt', ensureAuthenticated, (req, res) => {
 
 
 
+router.get('/userPrompts', ensureAuthenticated, (req, res) => {
+    console.log('Serving library page');
+    res.sendFile(path.join(distPath, 'index.html'));
+});
+
+
+
+
+
 
 
 // Serve static files

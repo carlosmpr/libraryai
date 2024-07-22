@@ -4,7 +4,7 @@ import { ensureAuthenticated } from '../middleware/authMiddleware.mjs';
 import multer from 'multer';
 import { createFile } from '../helpers/aiHelper.mjs';
 import { createMarkdown } from '../helpers/helpers.mjs';
-
+import { v4 as uuidv4 } from 'uuid';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -12,15 +12,17 @@ const upload = multer({ storage: storage });
 
 router.post('/create-repository', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
-
     const octokit = new Octokit({ auth: token });
 
     try {
-        const { name } = req.body; // Repository name passed from the client
-        const response = await octokit.repos.createForAuthenticatedUser({
+        let { name } = req.body; // Repository name passed from the client
+        name = `library-${name}`; // Add the 'library-' prefix
+
+        const response = await octokit.rest.repos.createForAuthenticatedUser({
             name,
             private: true // Change to false if you want it to be public
         });
+
         res.json({
             message: 'Repository created successfully!',
             repository: response.data,
@@ -118,9 +120,12 @@ router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
             order: 'desc'
         });
 
+        // Filter out the config repositories
+        const filteredRepos = data.items.filter(repo => !repo.name.startsWith(`library-${username}-config`));
+
         res.json({
             message: 'Repositories fetched successfully!',
-            repositories: data.items
+            repositories: filteredRepos
         });
     } catch (error) {
         console.error('Failed to fetch repositories:', error);
@@ -267,9 +272,9 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
                 throw fileError;
             }
         }
-
+        const id = uuidv4();
         // Step 4: Add the new instruction
-        instructionsArray.push({ id: instructionName, model, instructions });
+        instructionsArray.push({  id: id,name: instructionName, model, instructions });
 
         // Encode the updated content
         const updatedContent = Buffer.from(JSON.stringify(instructionsArray, null, 2)).toString('base64');

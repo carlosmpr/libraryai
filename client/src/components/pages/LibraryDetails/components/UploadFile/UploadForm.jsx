@@ -73,7 +73,7 @@ const UploadForm = ({
                   className={`btn ${selectedInstruction === instruction.id ? "btn-primary" : "btn-secondary"}`}
                   onClick={() => setSelectedInstruction(instruction.id)}
                 >
-                  {instruction.id}
+                  {instruction.name}
                 </button>
               ))}
             </div>

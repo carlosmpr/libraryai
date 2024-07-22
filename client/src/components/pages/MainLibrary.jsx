@@ -5,22 +5,22 @@ import Modal from "../ui/Modal"; // Adjust the import path according to your fil
 import Skeleton from "../ui/Skeleton";
 import FadeInTransition from "../animations/FadeTransition";
 import LoadingIndicator from "../ui/LoadingIndiicator";
-import {PlusCircleIcon} from "@heroicons/react/24/outline"
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../hooks/useLoadingIndicator";
+import CustomPromptLink from "../ui/CustomPromptLink";
+
 const MainLibrary = () => {
-  const { 
-    isModalOpen, 
-    setIsModalOpen, 
-    isLoading, 
-    isSuccess, 
-    isError, 
-    handleLoading 
+  const {
+    isModalOpen,
+    setIsModalOpen,
+    isLoading,
+    isSuccess,
+    isError,
+    handleLoading,
   } = useLoadingIndicator();
   const [repositories, setRepositories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRepoName, setNewRepoName] = useState("");
-
-
 
   useEffect(() => {
     const fetchRepositories = async () => {
@@ -69,7 +69,6 @@ const MainLibrary = () => {
     }
   };
 
-
   const onSubmit = (e) => {
     e.preventDefault();
     handleLoading(handleCreateRepository);
@@ -78,7 +77,9 @@ const MainLibrary = () => {
   return (
     <div className="p-10 bg-base-200/70">
       <Heading title={"Select your library"} decoration={"Libraries"} />
-
+      <div className="mb-4 -mt-10">
+        <CustomPromptLink />
+      </div>
       <div className="flex gap-10 flex-wrap">
         <button
           className="btn flex flex-col justify-center w-[250px]  h-[250px]  rounded-2xl btn-outline btn-primary"
@@ -95,14 +96,13 @@ const MainLibrary = () => {
           title="Create A New Library"
           description="Enter the name of the new library."
         >
-          <LoadingIndicator 
-            isLoading={isLoading} 
-            isSuccess={isSuccess} 
+          <LoadingIndicator
+            isLoading={isLoading}
+            isSuccess={isSuccess}
             isError={isError}
             successMessage="Library created successfully!"
             errorMessage="Failed to create library."
           >
-
             <form onSubmit={onSubmit} className="space-y-4">
               <input
                 type="text"

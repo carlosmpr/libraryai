@@ -10,6 +10,7 @@ import Breadcrumbs from "../../ui/BreadCrumbs";
 import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import Skeleton from "../../ui/Skeleton";
 import { LibraryProvider, useLibrary } from "./context/LibraryContext";
+import CustomPromptLink from "../../ui/CustomPromptLink";
 
 const LibraryDetailsContent = () => {
   const { repoName, loading, selectedFileContent, downloadUrl } = useLibrary();
@@ -39,6 +40,7 @@ const LibraryDetailsContent = () => {
           <DownloadOptions downloadUrl={downloadUrl} />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
+          <CustomPromptLink />
 
           <Link
             to={`/customizeprompt`}

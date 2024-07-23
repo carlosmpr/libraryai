@@ -3,7 +3,7 @@ import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import session from 'express-session';
 import { config } from 'dotenv';
-import githubRoutes from './routes/githubRoutes.mjs';
+import githubRoutes from './routes/github/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
 import aiRoutes from './routes/aiRoutes.mjs'
 

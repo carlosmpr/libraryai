@@ -19,7 +19,7 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
 
         const response = await octokit.rest.repos.createForAuthenticatedUser({
             name,
-            private: true // Change to false if you want it to be public
+            private: false // Change to false if you want it to be public
         });
 
         res.json({
@@ -98,15 +98,9 @@ router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
     }
 });
 
-router.get('/auth/status', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.json({ isAuthenticated: true, user: req.user.profile });
-    } else {
-        res.json({ isAuthenticated: false });
-    }
-});
 
-// New route to search for repositories starting with "library"
+
+
 router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
     const username = req.user.profile.username;
@@ -175,23 +169,7 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
     }
 });
 
-router.get('/repositories', ensureAuthenticated, async (req, res) => {
-    const token = req.user.accessToken;
 
-    const octokit = new Octokit({ auth: token });
-
-    try {
-        const { data: repos } = await octokit.rest.repos.listForAuthenticatedUser();
-
-        res.json({
-            message: 'Repositories fetched successfully!',
-            repositories: repos
-        });
-    } catch (error) {
-        console.error('Failed to fetch repositories:', error);
-        res.status(500).send('Failed to fetch repositories');
-    }
-});
 
 
 

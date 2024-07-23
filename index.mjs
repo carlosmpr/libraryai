@@ -39,7 +39,8 @@ app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
-app.get('/auth/github', passport.authenticate('github', { scope: ['repo'] }));
+app.get('/auth/github', passport.authenticate('github', { scope: ['public_repo'] }));
+
 
 app.get('/auth/github/callback', 
     passport.authenticate('github', { failureRedirect: '/login' }),

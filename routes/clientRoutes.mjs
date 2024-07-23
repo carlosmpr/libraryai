@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
     if (req.isAuthenticated()) {
         return res.redirect('/library');
     }
-    res.sendFile(path.join(distPath, 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Ensure authenticated for /mainlibrary

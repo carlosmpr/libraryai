@@ -17,7 +17,7 @@ app.use(express.json()); // Middleware to parse JSON bodies
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://main.d1ej5q1imo5wdd.amplifyapp.com/github/callback"
+    callbackURL: "https://main.d1ej5q1imo5wdd.amplifyapp.com/auth/github/callback"
 }, (accessToken, refreshToken, profile, cb) => {
     profile.accessToken = accessToken; // Attach accessToken
     const user = {

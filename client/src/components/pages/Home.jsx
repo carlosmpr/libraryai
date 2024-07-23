@@ -1,7 +1,7 @@
 
 function Home() {
   const handleLogin = () => {
-    window.location.href = 'http://localhost:3000/auth/github'; // Adjust URL to match your backend
+    window.location.href = '/auth/github'; // Adjust URL to match your backend
   };
 
   return (

@@ -289,11 +289,69 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
             sha: sha || undefined, // The blob SHA of the file being replaced, if it exists
         });
 
-        res.json({ message: 'Instructions saved successfully!' });
+        res.json({ message: 'Instructions saved successfully!', instruction:{  id: id,name: instructionName, model, instructions } });
 
     } catch (error) {
         console.error('Error saving instructions:', error);
         res.status(500).json({ error: 'Failed to save instructions' });
+    }
+});
+
+router.delete('/delete-instruction', ensureAuthenticated, async (req, res) => {
+ 
+    const { id } = req.body;  // ID of the instruction to be deleted
+    const token = req.user.accessToken;
+    const githubUsername = req.user.profile.username;
+    const repoName = `library-${githubUsername}-config`;
+    const octokit = new Octokit({ auth: token });
+    console.log(id)
+
+    try {
+        let instructionsArray = [];
+        let sha;
+
+        try {
+            // Fetch the current user-instructions.json file if it exists
+            const { data } = await octokit.rest.repos.getContent({
+                owner: githubUsername,
+                repo: repoName,
+                path: 'user-instructions.json',
+            });
+
+            // Decode the file content
+            const content = Buffer.from(data.content, 'base64').toString('utf8');
+            instructionsArray = JSON.parse(content);
+            sha = data.sha; // The blob SHA of the file being replaced
+        } catch (fileError) {
+            if (fileError.status === 404) {
+                console.log(fileError)
+                return res.status(404).json({ error: 'Instructions file not found' });
+            } else {
+                throw fileError;
+            }
+        }
+
+        // Remove the instruction with the specified id
+        const updatedInstructions = instructionsArray.filter(instruction => instruction.id !== id);
+
+        // Encode the updated content
+        const updatedContent = Buffer.from(JSON.stringify(updatedInstructions, null, 2)).toString('base64');
+
+        // Create or update the file in the repository
+        await octokit.rest.repos.createOrUpdateFileContents({
+            owner: githubUsername,
+            repo: repoName,
+            path: 'user-instructions.json',
+            message: `Delete instruction with id: ${id}`,
+            content: updatedContent,
+            sha: sha || undefined, // The blob SHA of the file being replaced, if it exists
+        });
+
+        res.json({ message: 'Instruction deleted successfully!' });
+
+    } catch (error) {
+        console.error('Error deleting instruction:', error);
+        res.status(500).json({ error: 'Failed to delete instruction' });
     }
 });
 

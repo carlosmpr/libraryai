@@ -7,7 +7,7 @@ import FadeInTransition from "../animations/FadeTransition";
 import LoadingIndicator from "../ui/LoadingIndiicator";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../hooks/useLoadingIndicator";
-import CustomPromptLink from "../ui/CustomPromptLink";
+import PromptNavigations from "../ui/NavigationButton";
 
 const MainLibrary = () => {
   const {
@@ -78,7 +78,8 @@ const MainLibrary = () => {
     <div className="p-10 bg-base-200/70">
       <Heading title={"Select your library"} decoration={"Libraries"} />
       <div className="mb-4 -mt-10">
-        <CustomPromptLink />
+      <PromptNavigations />
+      
       </div>
       <div className="flex gap-10 flex-wrap">
         <button

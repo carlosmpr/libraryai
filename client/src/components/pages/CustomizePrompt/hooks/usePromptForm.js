@@ -111,8 +111,9 @@ const usePromptForm = () => {
           body: JSON.stringify(promptData),
         });
 
-        setUserInstructions([...userInstructions, {id:instructionName,  model: selectedModel,
-          instructions: selectedExample}])
+        console.log(response)
+
+        setUserInstructions([...userInstructions])
         if (!response.ok) {
           throw new Error("Failed to save instructions");
         }

@@ -1,5 +1,5 @@
 /* eslint-disable no-undef */
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import FileTree from "./components/FileTree";
 import UploadFile from "./components/UploadFile";
 import CreateFolder from "./components/CreateFolder";
@@ -7,10 +7,10 @@ import MarkDownPreview from "../../ui/MarkDownPreview";
 import DownloadOptions from "./components/DownloadOptions";
 import CodeDownload from "./components/CodeDownload";
 import Breadcrumbs from "../../ui/BreadCrumbs";
-import { Cog6ToothIcon } from "@heroicons/react/24/outline";
 import Skeleton from "../../ui/Skeleton";
+import PromptNavigations from "../../ui/NavigationButton";
 import { LibraryProvider, useLibrary } from "./context/LibraryContext";
-import CustomPromptLink from "../../ui/CustomPromptLink";
+
 
 const LibraryDetailsContent = () => {
   const { repoName, loading, selectedFileContent, downloadUrl } = useLibrary();
@@ -40,15 +40,7 @@ const LibraryDetailsContent = () => {
           <DownloadOptions downloadUrl={downloadUrl} />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
-          <CustomPromptLink />
-
-          <Link
-            to={`/customizeprompt`}
-            className="btn border-2 justify-center rounded-2xl"
-          >
-            <Cog6ToothIcon className="w-8" />
-            <span className="text-xs">Customize Prompt</span>
-          </Link>
+         <PromptNavigations />
         </div>
       </div>
     </div>

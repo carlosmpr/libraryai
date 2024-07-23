@@ -1,7 +1,7 @@
 .env
 clietn/node_modules
 /node_modules
-/dist
+
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

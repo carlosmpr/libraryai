@@ -1,12 +1,13 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useInstructions } from "../../../context/UserInstructions";
 
 const usePromptForm = () => {
   const { repoName } = useParams();
-
+  const { userInstructions, setUserInstructions } = useInstructions();
   const navigate = useNavigate();
+  const location = useLocation();
   const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen } = useLoadingIndicator();
   const [formState, setFormState] = useState({
     selectedFile: null,
@@ -16,12 +17,28 @@ const usePromptForm = () => {
   });
   const [markdownContent, setMarkdownContent] = useState("");
   const [currentAction, setCurrentAction] = useState("");
-  const { userInstructions, setUserInstructions } = useInstructions();
+
+  const queryParams = new URLSearchParams(location.search);
+  const instructionId = queryParams.get("id");
+
+  useEffect(() => {
+    if (instructionId) {
+      const instruction = userInstructions.find((instr) => instr.id === instructionId);
+      if (instruction) {
+        setFormState({
+          selectedFile: null,
+          selectedExample: instruction.instructions,
+          selectedModel: instruction.model,
+          instructionName: instruction.name,
+        });
+      }
+    }
+  }, [instructionId, userInstructions]);
 
   const promptExamples = [
-    "Write a detail step by step of the code",
+    "Write a detailed step by step of the code",
     "Write the Md File in Spanish",
-    "Write 5 example of using this component",
+    "Write 5 examples of using this component",
     "Write the Code with Typescript and explain the new addition",
   ];
 
@@ -67,8 +84,6 @@ const usePromptForm = () => {
           body: formData,
         });
 
-   
-
         if (!response.ok) {
           throw new Error("Failed to run test");
         }
@@ -94,15 +109,18 @@ const usePromptForm = () => {
     }
 
     const promptData = {
+      id: instructionId,
       instructionName,
       model: selectedModel,
       instructions: selectedExample,
       repoName,
     };
 
+    const endpoint = instructionId ? "/api/update-instruction" : "/api/save-instructions";
+
     try {
       await handleLoading(async () => {
-        const response = await fetch("/api/save-instructions", {
+        const response = await fetch(endpoint, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -111,11 +129,17 @@ const usePromptForm = () => {
           body: JSON.stringify(promptData),
         });
 
-        console.log(response)
-
-        setUserInstructions([...userInstructions])
         if (!response.ok) {
-          throw new Error("Failed to save instructions");
+          throw new Error(`Failed to ${instructionId ? "update" : "save"} instructions`);
+        }
+
+        const result = await response.json();
+        if (instructionId) {
+          setUserInstructions((prevInstructions) =>
+            prevInstructions.map((instr) => (instr.id === instructionId ? result.instruction : instr))
+          );
+        } else {
+          setUserInstructions((prevInstructions) => [...prevInstructions, result.instruction]);
         }
       });
     } catch (error) {

@@ -6,7 +6,9 @@ import {
   PlusCircleIcon,
   MinusCircleIcon,
   TrashIcon,
+  PencilIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "react-router-dom";
 
 function ListPrompts({ id, name, instructions, model, onDelete }) {
   const [expand, setExpand] = useState(false);
@@ -34,9 +36,18 @@ function ListPrompts({ id, name, instructions, model, onDelete }) {
         </div>
         <div className="flex justify-between items-center">
           <span>{model}</span>
-          <button className="btn btn-error" onClick={handleDelete}>
-            <TrashIcon className="w-4" />
-          </button>
+          <div className="space-x-4">
+            <button className="btn btn-error btn-sm" onClick={handleDelete}>
+              <TrashIcon className="w-4" />
+            </button>
+
+            <Link
+              to={`/customizeprompt?id=${id}`}
+              className="btn btn-neutral btn-sm"
+            >
+              <PencilIcon className="w-4" />
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -59,7 +70,7 @@ export default function UserPrompts() {
   const { userInstructions, setUserInstructions } = useInstructions();
 
   const handleDeleteInstruction = async (id) => {
-    console.log(id)
+    console.log(id);
     try {
       const response = await fetch("/api/delete-instruction", {
         method: "DELETE",
@@ -86,7 +97,11 @@ export default function UserPrompts() {
       <section className="w-full px-32 bg-base-200/40">
         {userInstructions.map((item) => (
           <div key={item.id}>
-            <ListPrompts key={item.id} {...item} onDelete={handleDeleteInstruction} />
+            <ListPrompts
+              key={item.id}
+              {...item}
+              onDelete={handleDeleteInstruction}
+            />
           </div>
         ))}
       </section>

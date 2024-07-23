@@ -297,6 +297,80 @@ router.post('/save-instructions', ensureAuthenticated, async (req, res) => {
     }
 });
 
+router.post('/update-instruction', ensureAuthenticated, async (req, res) => {
+    const { id, instructionName, model, instructions } = req.body;
+    const token = req.user.accessToken;
+    const githubUsername = req.user.profile.username;
+    const repoName = `library-${githubUsername}-config`;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        // Check if the repository exists
+        try {
+            await octokit.rest.repos.get({
+                owner: githubUsername,
+                repo: repoName,
+            });
+        } catch (repoError) {
+            if (repoError.status === 404) {
+                await octokit.rest.repos.createForAuthenticatedUser({
+                    name: repoName,
+                    private: true,
+                });
+            } else {
+                throw repoError;
+            }
+        }
+
+        let instructionsArray = [];
+        let sha;
+
+        try {
+            // Fetch the current user-instructions.json file if it exists
+            const { data } = await octokit.rest.repos.getContent({
+                owner: githubUsername,
+                repo: repoName,
+                path: 'user-instructions.json',
+            });
+
+            // Decode the file content
+            const content = Buffer.from(data.content, 'base64').toString('utf8');
+            instructionsArray = JSON.parse(content);
+            sha = data.sha;
+        } catch (fileError) {
+            if (fileError.status !== 404) {
+                throw fileError;
+            }
+        }
+
+        // Update the instruction
+        const updatedInstructionsArray = instructionsArray.map(instruction => 
+            instruction.id === id 
+            ? { id, name: instructionName, model, instructions } 
+            : instruction
+        );
+
+        // Encode the updated content
+        const updatedContent = Buffer.from(JSON.stringify(updatedInstructionsArray, null, 2)).toString('base64');
+
+        // Create or update the file in the repository
+        await octokit.rest.repos.createOrUpdateFileContents({
+            owner: githubUsername,
+            repo: repoName,
+            path: 'user-instructions.json',
+            message: `Update instruction: ${instructionName}`,
+            content: updatedContent,
+            sha: sha || undefined,
+        });
+
+        res.json({ message: 'Instruction updated successfully!', instruction: { id, name: instructionName, model, instructions } });
+    } catch (error) {
+        console.error('Error updating instruction:', error);
+        res.status(500).json({ error: 'Failed to update instruction' });
+    }
+});
+
+
 router.delete('/delete-instruction', ensureAuthenticated, async (req, res) => {
  
     const { id } = req.body;  // ID of the instruction to be deleted

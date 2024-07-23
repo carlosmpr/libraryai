@@ -1,89 +1,37 @@
-import { useEffect, useState } from "react";
+
 import Heading from "../ui/Heading";
 import BentoCard from "../ui/BentoCard";
-import Modal from "../ui/Modal"; // Adjust the import path according to your file structure
+import Modal from "../ui/Modal";
 import Skeleton from "../ui/Skeleton";
 import FadeInTransition from "../animations/FadeTransition";
 import LoadingIndicator from "../ui/LoadingIndiicator";
 import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import useLoadingIndicator from "../hooks/useLoadingIndicator";
 import PromptNavigations from "../ui/NavigationButton";
+import { useMainLibrary } from "../context/MainLibraryContext";
 
 const MainLibrary = () => {
   const {
-    isModalOpen,
-    setIsModalOpen,
+    repositories,
+    loading,
     isLoading,
     isSuccess,
     isError,
-    handleLoading,
-  } = useLoadingIndicator();
-  const [repositories, setRepositories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [newRepoName, setNewRepoName] = useState("");
-
-  useEffect(() => {
-    const fetchRepositories = async () => {
-      try {
-        const response = await fetch("/api/repositories/library", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Include cookies in the request
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setRepositories(data.repositories);
-        } else {
-          console.error("Failed to fetch repositories");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRepositories();
-  }, []);
-
-  const handleCreateRepository = async () => {
-    const response = await fetch("/api/create-repository", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({ name: newRepoName }),
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      setRepositories([...repositories, data.repository]);
-      setNewRepoName("");
-    } else {
-      console.error("Failed to create repository");
-      throw new Error("Failed to create repository");
-    }
-  };
-
-  const onSubmit = (e) => {
-    e.preventDefault();
-    handleLoading(handleCreateRepository);
-  };
+    isModalOpen,
+    setIsModalOpen,
+    newRepoName,
+    setNewRepoName,
+    onSubmit,
+  } = useMainLibrary();
 
   return (
     <div className="p-10 bg-base-200/70">
       <Heading title={"Select your library"} decoration={"Libraries"} />
       <div className="mb-4 -mt-10">
-      <PromptNavigations />
-      
+        <PromptNavigations />
       </div>
       <div className="flex gap-10 flex-wrap">
         <button
-          className="btn flex flex-col justify-center w-[250px]  h-[250px]  rounded-2xl btn-outline btn-primary"
+          className="btn flex flex-col justify-center w-[250px] h-[250px] rounded-2xl btn-outline btn-primary"
           onClick={() => setIsModalOpen(true)}
         >
           <PlusCircleIcon className="w-10" />

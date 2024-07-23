@@ -5,12 +5,12 @@ import session from 'express-session';
 import { config } from 'dotenv';
 import githubRoutes from './routes/github/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
-import aiRoutes from './routes/aiRoutes.mjs'
+import aiRoutes from './routes/aiRoutes.mjs';
 
 config(); // Load environment variables from .env file
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 8080; // Use process.env.PORT or default to 8080
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
@@ -41,7 +41,6 @@ passport.deserializeUser((obj, done) => done(null, obj));
 
 app.get('/auth/github', passport.authenticate('github', { scope: ['public_repo'] }));
 
-
 app.get('/auth/github/callback', 
     passport.authenticate('github', { failureRedirect: '/login' }),
     (req, res) => {
@@ -50,7 +49,7 @@ app.get('/auth/github/callback',
 
 app.use('/api', githubRoutes);
 app.use('/ai', aiRoutes);
-app.use( '/', clientRoutes);
+app.use('/', clientRoutes);
 
 app.listen(port, () => {
     console.log(`Server running on http://localhost:${port}`);

@@ -9,26 +9,26 @@ function NavigationButton({
   to,
   icon: Icon,
   title,
-  buttonStyle = "btn-primary",
+
 }) {
   return (
     <Link
       to={to}
-      className={`btn ${buttonStyle} rounded-2xl flex items-center`}
+      className={`rounded-2xl flex items-center gap-2`}
     >
-      {Icon && <Icon className="w-8 mr-2" />}
-      {title}
+      {Icon && <Icon className="w-6 " />}
+      <p className="text-sm">{title}</p>
     </Link>
   );
 }
 
 export default function PromptNavigations() {
   return (
-    <div className="flex gap-4">
+    <div className="flex flex-col gap-4 mt-auto">
       <NavigationButton
         to="/userPrompts"
         icon={AdjustmentsHorizontalIcon}
-        title={"My Custom Prompts"}
+        title={"Custom Prompts"}
         buttonStyle="btn-secondary"
       />
 
@@ -38,6 +38,8 @@ export default function PromptNavigations() {
         buttonStyle="btn-neutral"
         title={"Create Prompt"}
       />
+
+<button className="btn btn-secondary btn-sm ">Sign out</button>
     </div>
   );
 }

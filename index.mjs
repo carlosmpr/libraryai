@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'dist')));
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://codelibrary-4431a4946090.herokuapp.com/auth/github/callback"
+    callbackURL: "https://libraryai-efbafc7d6218.herokuapp.com/auth/github/callback"
 }, (accessToken, refreshToken, profile, cb) => {
     profile.accessToken = accessToken; // Attach accessToken
     const user = {

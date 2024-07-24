@@ -1,6 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import {ensureAuthenticated} from '../middleware/authMiddleware.mjs'
 
 const router = express.Router();
 
@@ -14,23 +15,23 @@ router.get('/', (req, res) => {
 });
 
 // Ensure authenticated for /library
-router.get('/library', (req, res) => {
+router.get('/library', ensureAuthenticated,(req, res) => {
   console.log('Serving library page');
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
 // Route to serve library details page
-router.get('/library/:repoName', (req, res) => {
+router.get('/library/:repoName', ensureAuthenticated, (req, res) => {
   console.log('Serving library details page');
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
-router.get('/customizeprompt', (req, res) => {
+router.get('/customizeprompt', ensureAuthenticated,(req, res) => {
   console.log('Serving customize prompt page');
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });
 
-router.get('/userPrompts', (req, res) => {
+router.get('/userPrompts',ensureAuthenticated, (req, res) => {
   console.log('Serving user prompts page');
   res.sendFile(path.join(__dirname, '..', 'dist', 'index.html'));
 });

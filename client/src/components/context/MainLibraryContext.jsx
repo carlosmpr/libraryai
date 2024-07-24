@@ -11,7 +11,7 @@ export const MainLibraryProvider = ({ children }) => {
   const [repositories, setRepositories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRepoName, setNewRepoName] = useState("");
-  console.log(newRepoName)
+  const [newRepoDescription, setNewRepoDescription] = useState(""); // New state for description
 
   useEffect(() => {
     const fetchRepositories = async () => {
@@ -43,13 +43,14 @@ export const MainLibraryProvider = ({ children }) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ name: newRepoName }),
+      body: JSON.stringify({ name: newRepoName, description: newRepoDescription }), // Include description
     });
 
     if (response.ok) {
       const data = await response.json();
       setRepositories((prevRepos) => [...prevRepos, data.repository]);
       setNewRepoName("");
+      setNewRepoDescription(""); // Reset description
     } else {
       console.error("Failed to create repository");
       throw new Error("Failed to create repository");
@@ -73,6 +74,8 @@ export const MainLibraryProvider = ({ children }) => {
         setIsModalOpen,
         newRepoName,
         setNewRepoName,
+        newRepoDescription,
+        setNewRepoDescription,
         onSubmit,
       }}
     >

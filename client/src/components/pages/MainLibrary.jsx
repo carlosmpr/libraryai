@@ -19,13 +19,15 @@ const MainLibrary = () => {
     setIsModalOpen,
     newRepoName,
     setNewRepoName,
+    newRepoDescription,
+    setNewRepoDescription,
     onSubmit,
   } = useMainLibrary();
 
   return (
     <div className="flex bg-base-200/40 h-screen">
      <SideBar />
-      <div className="p-10 bg-base-200/70 w-full">
+      <div className="p-10 bg-base-200/70 w-full h-full overflow-y-scroll">
         <Heading title={"Select your library"} decoration={"Libraries"} />
 
         <div className="flex gap-10 flex-wrap">
@@ -42,7 +44,7 @@ const MainLibrary = () => {
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             title="Create A New Library"
-            description="Enter the name of the new library."
+            description="Enter the name and description of the new library."
           >
             <LoadingIndicator
               isLoading={isLoading}
@@ -59,6 +61,13 @@ const MainLibrary = () => {
                   placeholder="Library Name"
                   required
                   className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
+                />
+                <textarea
+                  value={newRepoDescription}
+                  onChange={(e) => setNewRepoDescription(e.target.value)}
+                  placeholder="Library Description"
+                  required
+                  className="textarea w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
                 />
                 <button
                   type="submit"
@@ -77,9 +86,7 @@ const MainLibrary = () => {
               <FadeInTransition key={repo.id} delay={0.2 * index}>
                 <BentoCard
                   title={repo.name}
-                  description={
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."
-                  }
+                  description={repo.description || "No description provided"}
                 />
               </FadeInTransition>
             ))

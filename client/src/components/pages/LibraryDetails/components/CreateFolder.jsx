@@ -4,11 +4,14 @@ import Modal from "../../../ui/Modal";
 import { FolderPlusIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useLibrary } from "../context/LibraryContext";
+
+import DirStructureOptions from './DirStructureOptions';
+
 const CreateFolder = () => {
   const { repoName, loadContents } = useLibrary();
   const { isModalOpen, setIsModalOpen } = useLoadingIndicator();
-  const [newFolderName, setNewFolderName] = useState("");
   const [creatingFolder, setCreatingFolder] = useState(false);
+  const [selectedStructure, setSelectedStructure] = useState(null);
 
   const handleCreateFolder = async (e) => {
     e.preventDefault();
@@ -22,13 +25,13 @@ const CreateFolder = () => {
         },
         credentials: "include",
         body: JSON.stringify({
-          folderName: newFolderName,
+          structure: selectedStructure,
           repository: repoName,
         }),
       });
 
       if (response.ok) {
-        setNewFolderName("");
+        
         loadContents();
       } else {
         console.error("Failed to create folder");
@@ -38,6 +41,11 @@ const CreateFolder = () => {
     } finally {
       setCreatingFolder(false);
     }
+  };
+
+  const handleStructureSelect = (structure) => {
+    setSelectedStructure(structure);
+   
   };
 
   return (
@@ -59,14 +67,7 @@ const CreateFolder = () => {
         onClose={() => setIsModalOpen(false)}
       >
         <form onSubmit={handleCreateFolder}>
-          <input
-            type="text"
-            value={newFolderName}
-            onChange={(e) => setNewFolderName(e.target.value)}
-            placeholder="Folder name"
-            required
-            className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
-          />
+        <DirStructureOptions onSelect={handleStructureSelect} selectedStructure={selectedStructure} />
           <button
             type="submit"
             disabled={creatingFolder}
@@ -76,6 +77,8 @@ const CreateFolder = () => {
           </button>
         </form>
       </Modal>
+     
+
     </>
   );
 };

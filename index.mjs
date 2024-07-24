@@ -3,16 +3,16 @@ import passport from 'passport';
 import { Strategy as GitHubStrategy } from 'passport-github';
 import session from 'express-session';
 import { config } from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import githubRoutes from './routes/github/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
 import aiRoutes from './routes/aiRoutes.mjs';
 
-config(); // Load environment variables from .env file
 
+config();
 const app = express();
-const port = process.env.PORT || 8080; // Use process.env.PORT or default to 8080
-
-app.use(express.json()); // Middleware to parse JSON bodies
+const port = process.env.PORT || 8080;
 
 // Get the directory name of the current module file
 const __filename = fileURLToPath(import.meta.url);
@@ -20,11 +20,10 @@ const __dirname = path.dirname(__filename);
 
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
-
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://main.d1rvbdpcrpqeed.amplifyapp.com/auth/github/callback"
+    callbackURL: "https://codelibrary-4431a4946090.herokuapp.com/auth/github/callback"
 }, (accessToken, refreshToken, profile, cb) => {
     profile.accessToken = accessToken; // Attach accessToken
     const user = {
@@ -54,10 +53,12 @@ app.get('/auth/github/callback',
         res.redirect('/library');
     });
 
+
+// Use the client routes
+app.use('/', clientRoutes);
 app.use('/api', githubRoutes);
 app.use('/ai', aiRoutes);
-app.use('/', clientRoutes);
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server is running on port ${port}`);
 });

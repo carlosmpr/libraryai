@@ -9,7 +9,6 @@ function NavigationButton({
   to,
   icon: Icon,
   title,
-
 }) {
   return (
     <Link
@@ -23,23 +22,41 @@ function NavigationButton({
 }
 
 export default function PromptNavigations() {
+  const handleSignOut = async () => {
+    try {
+      const response = await fetch('/signout', {
+        method: 'GET',
+        credentials: 'include', // To include cookies
+      });
+
+      if (response.ok) {
+        // Server will handle the redirect
+        window.location.href = '/'; // Fallback in case server does not handle redirect
+      } else {
+        console.error('Failed to sign out');
+      }
+    } catch (error) {
+      console.error('An error occurred during sign out', error);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4 mt-auto">
       <NavigationButton
         to="/userPrompts"
         icon={AdjustmentsHorizontalIcon}
         title={"Custom Prompts"}
-        buttonStyle="btn-secondary"
       />
 
       <NavigationButton
         to="/customizeprompt"
         icon={Cog6ToothIcon}
-        buttonStyle="btn-neutral"
         title={"Create Prompt"}
       />
 
-<button className="btn btn-secondary btn-sm ">Sign out</button>
+      <button className="btn btn-secondary btn-sm" onClick={handleSignOut}>
+        Sign out
+      </button>
     </div>
   );
 }

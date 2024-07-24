@@ -22,8 +22,8 @@ const LibraryDetailsContent = () => {
   return (
     <div className="flex bg-base-200/40 h-screen">
       <SideBar >
-      <div className>
-        <h1 className="text-xl mb-10 font-bold">{repoName}</h1>
+      <div >
+        <h1 className="text-xl mb-2 font-bold">{repoName}</h1>
         <FileTree />
       </div>
       </SideBar>

@@ -11,6 +11,7 @@ export const MainLibraryProvider = ({ children }) => {
   const [repositories, setRepositories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRepoName, setNewRepoName] = useState("");
+  console.log(newRepoName)
 
   useEffect(() => {
     const fetchRepositories = async () => {

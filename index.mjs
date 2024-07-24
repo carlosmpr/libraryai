@@ -14,6 +14,13 @@ const port = process.env.PORT || 8080; // Use process.env.PORT or default to 808
 
 app.use(express.json()); // Middleware to parse JSON bodies
 
+// Get the directory name of the current module file
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve static files from the dist directory
+app.use(express.static(path.join(__dirname, 'dist')));
+
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,

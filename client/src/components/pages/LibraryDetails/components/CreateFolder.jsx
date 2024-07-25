@@ -4,7 +4,6 @@ import Modal from "../../../ui/Modal";
 import { FolderPlusIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useLibrary } from "../context/LibraryContext";
-
 import DirStructureOptions from './DirStructureOptions';
 
 const CreateFolder = () => {
@@ -31,8 +30,8 @@ const CreateFolder = () => {
       });
 
       if (response.ok) {
-        
         loadContents();
+        setIsModalOpen(false);
       } else {
         console.error("Failed to create folder");
       }
@@ -45,7 +44,6 @@ const CreateFolder = () => {
 
   const handleStructureSelect = (structure) => {
     setSelectedStructure(structure);
-   
   };
 
   return (
@@ -61,24 +59,22 @@ const CreateFolder = () => {
         isOpen={isModalOpen}
         modalId="create_folder_modal"
         title="Add New Folder"
-        description="Enter the name of the new folder."
+        description="Select a folder structure to add."
         triggerButtonLabel="Add New Folder"
         triggerButtonClass="btn-outline btn-primary"
         onClose={() => setIsModalOpen(false)}
       >
         <form onSubmit={handleCreateFolder}>
-        <DirStructureOptions onSelect={handleStructureSelect} selectedStructure={selectedStructure} />
+          <DirStructureOptions onSelect={handleStructureSelect} selectedStructure={selectedStructure} />
           <button
             type="submit"
-            disabled={creatingFolder}
+            disabled={creatingFolder || !selectedStructure}
             className="btn btn-primary"
           >
             {creatingFolder ? "Creating..." : "Create Folder"}
           </button>
         </form>
       </Modal>
-     
-
     </>
   );
 };

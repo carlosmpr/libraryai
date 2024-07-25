@@ -124,27 +124,27 @@ const createOrUpdateFile = async (octokit, owner, repo, path, message, content) 
 
 router.post('/create-folder', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
-    const { repository } = req.body;
+    const { repository, structure } = req.body;
     const octokit = new Octokit({ auth: token });
 
-    const folders = ['introduction', 'ui', 'sections', 'pages', 'animations', 'helperFunctions'];
     const owner = req.user.profile.username;
     const message = 'Create folder with .gitkeep';
 
     try {
-        for (const folder of folders) {
+        for (const folder of structure.structure) {
             const path = `${folder}/.gitkeep`;
             await createOrUpdateFile(octokit, owner, repository, path, message, '');
         }
 
         res.json({
-            message: 'Default folder structure created successfully!'
+            message: 'Selected folder structure created successfully!'
         });
     } catch (error) {
-        console.error('Failed to create default folder structure:', error);
-        res.status(500).send('Failed to create default folder structure');
+        console.error('Failed to create selected folder structure:', error);
+        res.status(500).send('Failed to create selected folder structure');
     }
 });
+
 
 router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;

@@ -25,7 +25,7 @@ const DirStructureOptions = ({ onSelect, selectedStructure }) => {
           }`}
         >
           <h3 className="font-bold mb-2">{structure.name}</h3>
-          <ul className=" ml-5">
+          <ul className="ml-5">
             {structure.structure.map((folder) => (
               <li key={folder} className="flex gap-2">
                 <FolderIcon className="w-4 h-4 mr-1" />

@@ -11,9 +11,29 @@ export const MainLibraryProvider = ({ children }) => {
   const [repositories, setRepositories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [newRepoName, setNewRepoName] = useState("");
-  const [newRepoDescription, setNewRepoDescription] = useState(""); // New state for description
+  const [newRepoDescription, setNewRepoDescription] = useState("");
+  const [userProfile, setUserProfile] = useState(null); // New state for user profile
 
   useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch("/api/user/profile", {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserProfile(data.profile);
+        } else {
+          console.error("Failed to fetch user profile");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+    };
+
     const fetchRepositories = async () => {
       try {
         const response = await fetch("/api/repositories/library", {
@@ -35,6 +55,7 @@ export const MainLibraryProvider = ({ children }) => {
       }
     };
 
+    fetchUserProfile();
     fetchRepositories();
   }, []);
 
@@ -43,14 +64,14 @@ export const MainLibraryProvider = ({ children }) => {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify({ name: newRepoName, description: newRepoDescription }), // Include description
+      body: JSON.stringify({ name: newRepoName, description: newRepoDescription }),
     });
 
     if (response.ok) {
       const data = await response.json();
       setRepositories((prevRepos) => [...prevRepos, data.repository]);
       setNewRepoName("");
-      setNewRepoDescription(""); // Reset description
+      setNewRepoDescription("");
     } else {
       console.error("Failed to create repository");
       throw new Error("Failed to create repository");
@@ -77,6 +98,7 @@ export const MainLibraryProvider = ({ children }) => {
         newRepoDescription,
         setNewRepoDescription,
         onSubmit,
+        userProfile, // Provide user profile in the context
       }}
     >
       {children}

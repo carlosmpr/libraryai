@@ -9,7 +9,6 @@ import githubRoutes from './routes/github/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
 import aiRoutes from './routes/aiRoutes.mjs';
 
-
 config();
 const app = express();
 const port = process.env.PORT || 8080;
@@ -18,14 +17,14 @@ const port = process.env.PORT || 8080;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
 app.use(express.json());
 // Serve static files from the dist directory
 app.use(express.static(path.join(__dirname, 'dist')));
+
 passport.use(new GitHubStrategy({
     clientID: process.env.GITHUB_CLIENT_ID,
     clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "https://libraryai-efbafc7d6218.herokuapp.com/auth/github/callback"
+    callbackURL: "http://localhost:8080/auth/github/callback"
 }, (accessToken, refreshToken, profile, cb) => {
     profile.accessToken = accessToken; // Attach accessToken
     const user = {
@@ -55,16 +54,22 @@ app.get('/auth/github/callback',
         res.redirect('/library');
     });
 
-
-    app.get('/signout', (req, res, next) => {
-        req.logout((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.redirect('/'); // Redirect to home page after logging out
-        });
+app.get('/signout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/'); // Redirect to home page after logging out
     });
-    
+});
+
+app.get('/api/user/profile', (req, res) => {
+    if (req.isAuthenticated()) {
+        res.json({ profile: req.user.profile });
+    } else {
+        res.status(401).send('Not authenticated');
+    }
+});
 
 // Use the client routes
 app.use('/', clientRoutes);

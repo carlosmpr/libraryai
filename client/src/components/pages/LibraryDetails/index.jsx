@@ -13,7 +13,7 @@ import SideBar from "../../ui/SideBar";
 
 
 const LibraryDetailsContent = () => {
-  const { repoName, loading, selectedFileContent, downloadUrl } = useLibrary();
+  const { repoName, loading, selectedFileContent,  } = useLibrary();
 
   if (loading) {
     return <Skeleton />;
@@ -39,7 +39,7 @@ const LibraryDetailsContent = () => {
 
           <UploadFile />
 
-          <DownloadOptions downloadUrl={downloadUrl} />
+          <DownloadOptions selectedFileContent={selectedFileContent} repoName={repoName} />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
          

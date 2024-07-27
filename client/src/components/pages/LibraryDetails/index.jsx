@@ -20,14 +20,14 @@ const LibraryDetailsContent = () => {
   }
 
   return (
-    <div className="flex bg-base-200/40 h-screen">
+    <div className="flex bg-orange-50 h-screen">
       <SideBar >
       <div >
         <h1 className="text-xl mb-2 font-bold">{repoName}</h1>
         <FileTree />
       </div>
       </SideBar>
-      <div className="flex flex-col bg-base-200 flex-1 h-screen overflow-y-scroll px-20">
+      <div className="flex flex-col bg-orange-50 flex-1 h-screen overflow-y-scroll px-20">
         <Breadcrumbs />
         {selectedFileContent && (
           <MarkDownPreview selectedFileContent={selectedFileContent} />

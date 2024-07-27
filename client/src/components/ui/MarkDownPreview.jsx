@@ -28,14 +28,16 @@ const MarkDownPreview = ({ selectedFileContent }) => {
     };
 
     return (
-        <div className="markdown-body w-full h-full bg-base-200 overflow-y-scroll p-10">
-            <h2>File Preview</h2>
+        <div className="markdown-body w-full h-full bg-white border border-2 border-black overflow-y-scroll p-10">
+          
             <Markdown
                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                 components={MarkdownComponents}
             >
                 {selectedFileContent}
             </Markdown>
+
+            <div className='h-[200px]'></div>
         </div>
     );
 };

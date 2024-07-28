@@ -9,6 +9,8 @@ import {
   PencilIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "react-router-dom";
+import Breadcrumbs from "../ui/BreadCrumbs";
+import SideBar from "../ui/SideBar";
 
 function ListPrompts({ id, name, instructions, model, onDelete }) {
   const [expand, setExpand] = useState(false);
@@ -94,17 +96,25 @@ export default function UserPrompts() {
 
   if (userInstructions.length > 0) {
     return (
-      <section className="w-full px-32 bg-base-200/40">
-        {userInstructions.map((item) => (
-          <div key={item.id}>
-            <ListPrompts
-              key={item.id}
-              {...item}
-              onDelete={handleDeleteInstruction}
-            />
+      <div className="flex bg-orange-50 h-screen">
+        <SideBar />
+        <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
+       <div className="py-6">
+          <Breadcrumbs />
           </div>
-        ))}
-      </section>
+          <div className="h-[90%] overflow-y-scroll ">
+          {userInstructions.map((item) => (
+            <div key={item.id}>
+              <ListPrompts
+                key={item.id}
+                {...item}
+                onDelete={handleDeleteInstruction}
+              />
+            </div>
+          ))}
+          </div>
+        </div>
+      </div>
     );
   } else {
     return <div>No user default instructions</div>;

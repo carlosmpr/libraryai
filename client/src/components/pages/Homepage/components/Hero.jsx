@@ -3,7 +3,7 @@
 export default function Hero({ reverse = false, title, description, image }) {
   return (
     <div
-      className={`flex w-full items-center justify-evenly max-w-2xl mx-auto pt-36 ${
+      className={`flex w-full items-center justify-center gap-10 max-w-5xl mx-auto pt-36 ${
         reverse && "flex-row-reverse"
       }`}
     >

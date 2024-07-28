@@ -8,10 +8,10 @@ export default function ServiceItem({
   className, // Add this line
 }) {
   return (
-    <div className={`flex flex-col w-[300px]  h-[350px] justify-center shrink-0 gap-2 border-2 border-black p-4  ${className}`}>
+    <div className={`flex flex-col w-[300px]  h-[350px] justify-center items-center shrink-0 gap-2 border-2 border-black p-4  ${className}`}>
       <img
         src={image}
-        className="w-6 shadow-sm aspect-square"
+        className="w-6 shadow-sm aspect-square bg-primary"
         alt={title}
        
       />

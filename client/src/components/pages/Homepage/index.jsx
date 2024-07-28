@@ -31,40 +31,41 @@ const navbarContent = {
 
 const services = [
   {
-    image: "message.svg",
-    title: "Component Libraries",
+    image: "logo.svg",
+    title: "Organize Your Code",
     description:
-      "Access a rich library of pre-built components that ensure consistency and speed up your development workflow.",
-  },
-  {
-    image: "tunder.svg",
-    title: "Dynamic APIs",
-    description:
-      "Integrate dynamic APIs easily with our scalable architecture, enhancing your application's functionality with minimal effort.",
+      "Organize your code into one repository or multiple. Structure your repository using a default layout or your own.",
   },
   {
     image: "logo.svg",
-    title: "Modular Design",
+    title: "Transform Multiple Files",
     description:
-      "Utilize modular design principles to create flexible, reusable code that adapts to any project's needs.",
+      "Upload up to 4 files at once. Pro users can transform up to 10-20 files at the same time.",
   },
   {
-    image: "chat.svg",
-    title: "Live Previews",
+    image: "logo.svg",
+    title: "Customize Instructions",
     description:
-      "Leverage live previews during development to see real-time changes and speed up your iteration cycles.",
+      "Personalize the instructions that appear in the markdown file. Add or delete as needed.",
   },
   {
-    image: "connect.svg",
-    title: "Seamless Connectivity",
+    image: "logo.svg",
+    title: "Multilingual",
     description:
-      "Ensure seamless connectivity with essential tools and services, facilitating an integrated development environment.",
+      "Write instructions in your preferred language (English, Spanish, Chinese, and more).",
+  },
+
+  {
+    image: "logo.svg",
+    title: "Play with Your Code",
+    description:
+      "Try our new playground where you can convert code into different programming languages, optimize it, and more.",
   },
   {
-    image: "heart.svg",
-    title: "Developer Support",
+    image: "logo.svg",
+    title: "Download Your Files",
     description:
-      "Benefit from comprehensive developer support, offering detailed documentation and community forums to aid your project development.",
+      "Download your code, the complete directory, or your markdown file with all the documentation you need.",
   },
 ];
 
@@ -73,53 +74,43 @@ function Home() {
     <>
       <Navbar {...navbarContent} />
       <div>
-        <MainSection
-          description={
-            "Document your code, create insightful guides, build a living component library, or simply store all your code.  Our AI tools make it easy to document your code "
-          }
-        >
+        <MainSection description="Store your code, create helpful guides, build a component library, or document your code. Our AI tools make it easy.">
           <h1>
             Welcome to <br /> Code Library
           </h1>
         </MainSection>
+
         <Marquee />
         <Feature
-          title="How does it Works?"
-          description="Simple drag your code and with the help of Ai you will have a md file with your documentation."
+          title="How Does It Work?"
+          description="Just drag your code, and with AI help, you'll get a markdown file with your code documentation."
           backgroundColor="bg-orange-50"
         >
           <SlidingRectangles />
 
           <Hero
-            title={"Where is my code store?"}
-            description={
-              "All your code will be store on your github repository"
-            }
-            image={"github.svg"}
+            title="Where Is My Code Stored?"
+            description="All your code will be stored securely in your GitHub repository. You can easily access and manage your code anytime."
+            image="github.svg"
           />
           <Hero
-            title={"Access to all your code?"}
-            description={
-              "No we only request access to publick repositories and Code Library will only create public repositores"
-            }
-            image={"access.png"}
+            title="Access to All Your Code?"
+            description="No, we only request access to your public repositories. Code Library will only create public repositories, ensuring your private code remains private."
+            image="access.png"
             reverse
           />
           <Hero
-            title={"MultiDocument Select"}
-            description={
-              "You can pass up to 4 code at the same time, and the system will be able to generate 4md files , pro user will generate up to 10"
-            }
-            image={"doc.png"}
+            title="Multi-Document Select"
+            description="You can upload up to 4 code files at once, and our system will generate 4 markdown files with documentation. Pro users can upload up to 10 files at the same time for even more convenience."
+            image="doc.png"
           />
           <Hero
-            title={"Power by OpenAi Ai"}
-            description={
-              "You can pass up to 4 code at the same time, and the system will be able to generate 4md files , pro user will generate up to 10"
-            }
-            image={"gpt.png"}
+            title="Powered by OpenAI"
+            description="With the help of OpenAI, you can upload up to 4 code files at once, and our system will generate 4 markdown files with detailed documentation. Pro users can upload up to 10 files at once."
+            image="gpt.png"
             reverse
           />
+
           <div className="flex flex-wrap w-full gap-10 justify-center pt-36">
             {services.map((item, index) => (
               <ServiceItem
@@ -134,11 +125,20 @@ function Home() {
             ))}
           </div>
 
-          <div className="flex flex-col items-center justify-center max-w-2xl mx-auto  mt-24 gap-4">
-            <h2 className="text-6xl font-black tracking-tighter ">
-              Why use code library? if i can use github directly
+          <div className="flex flex-col items-center justify-center max-w-2xl mx-auto mt-24 gap-4">
+            <h2 className="text-6xl font-black tracking-tighter">
+              Why use Code Library if I can use GitHub directly?
             </h2>
-            <p className="sm:text-2xl sm:leading-8">Because i can just simple drop my code , create the documentation and make my guide or component library and i could search for all the components in one place and not lost code </p>
+            <p className="sm:text-2xl sm:leading-8">
+              With Code Library, you can easily drop your code, create
+              documentation, and build your guide or component library. Find all
+              your components in one place and never lose your code.
+            </p>
+            <a href={'/auth/github'}
+          className="btn btn-primary px-12"
+        >
+         Start Now
+        </a>
           </div>
         </Feature>
       </div>

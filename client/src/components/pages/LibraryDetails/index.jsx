@@ -7,25 +7,27 @@ import MarkDownPreview from "../../ui/MarkDownPreview";
 import DownloadOptions from "./components/DownloadOptions";
 import CodeDownload from "./components/CodeDownload";
 import Breadcrumbs from "../../ui/BreadCrumbs";
-import Skeleton from "../../ui/Skeleton";
+
 import { LibraryProvider, useLibrary } from "./context/LibraryContext";
 import SideBar from "../../ui/SideBar";
-
+import Skeleton from "../../ui/Skeleton";
 
 const LibraryDetailsContent = () => {
-  const { repoName, loading, selectedFileContent,  } = useLibrary();
-
-  if (loading) {
-    return <Skeleton />;
-  }
+  const { repoName, selectedFileContent, loading } = useLibrary();
 
   return (
     <div className="flex bg-orange-50 h-screen">
-      <SideBar >
-      <div >
-        <h1 className="text-xl mb-2 font-bold">{repoName}</h1>
-        <FileTree />
-      </div>
+      <SideBar>
+        <div>
+          {loading ? (
+            <Skeleton />
+          ) : (
+            <>
+              <h1 className="text-xl mb-2 font-bold">{repoName}</h1>
+              <FileTree />
+            </>
+          )}
+        </div>
       </SideBar>
       <div className="flex flex-col bg-orange-50 flex-1 h-screen overflow-y-scroll px-20">
         <Breadcrumbs />
@@ -39,10 +41,12 @@ const LibraryDetailsContent = () => {
 
           <UploadFile />
 
-          <DownloadOptions selectedFileContent={selectedFileContent} repoName={repoName} />
+          <DownloadOptions
+            selectedFileContent={selectedFileContent}
+            repoName={repoName}
+          />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
-         
         </div>
       </div>
     </div>

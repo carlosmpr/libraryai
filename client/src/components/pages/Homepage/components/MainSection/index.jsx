@@ -35,16 +35,12 @@ export default function MainSection({
         className="w-full flex flex-col-reverse justify-center 
       sm:flex-row gap-3 text-sm  sm:text-base font-semibold  whitespace-nowrap "
       >
-        <button
+        <a href={'/auth/github'}
           className="btn btn-secondary px-12"
         >
          Start Now
-        </button>
-        <button
-         className="btn  btn-primary"
-        >
-          <p>How does works?</p>
-        </button>
+        </a>
+        
       </div>
     </section>
   );

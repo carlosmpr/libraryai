@@ -11,7 +11,7 @@ export default function BentoCard({
 
   return (
     <Link to={`/library/${title}`}
-      className={`flex ${flexClass}  group justify-between bg-base-100 items-start  text-sm p-4 border-2 border-black  shadow-2xl rounded-2xl    w-[250px]  h-[250px]  shrink-0 ${flexSize}`}
+      className={`flex ${flexClass}  group justify-between bg-base-100 items-start  text-sm p-4 border-2 border-black  shadow-2xl rounded-2xl    w-[250px]  h-[290px]  shrink-0 ${flexSize}`}
     >
       <div>
         <h3 className="text-2xl font-medium  ">{title}</h3>

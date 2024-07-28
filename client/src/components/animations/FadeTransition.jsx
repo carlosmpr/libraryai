@@ -7,7 +7,6 @@ import { useInView } from "react-intersection-observer";
 export default function FadeInTransition({
   children,
   delay = 0,
-  className = "flex flex-1",
 })  {
   const { ref, inView } = useInView({
     triggerOnce: true, // Optional: Trigger animation only once
@@ -29,7 +28,7 @@ export default function FadeInTransition({
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         variants={fadeInVariant}
-        className={className}
+      
       >
         {children}
       </m.div>

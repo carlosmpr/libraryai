@@ -23,7 +23,7 @@ export default function CustomizePrompt() {
   } = usePromptForm();
 
   return (
-    <div className="flex bg-base-200/40 h-screen">
+    <div className="flex bg-orange-50 h-screen">
       <LoadingModal
         isModalOpen={isModalOpen}
         setIsModalOpen={setIsModalOpen}
@@ -51,7 +51,7 @@ export default function CustomizePrompt() {
         navigate={navigate}
       />
 
-      <div className="flex bg-base-200 flex-1 h-screen overflow-y-scroll px-20">
+      <div className="flex  flex-1 h-screen overflow-y-scroll px-20">
         {markdownContent && <MarkDownPreview selectedFileContent={markdownContent} />}
       </div>
     </div>

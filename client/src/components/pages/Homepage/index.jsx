@@ -6,6 +6,7 @@ import Hero from "./components/Hero";
 import ServiceItem from "./components/ServiceItem";
 import Marquee from "./components/Marquee";
 import Footer from "./components/Footer";
+import FadeInTransition from "../../animations/FadeTransition";
 const brandLogo = "/logo.svg";
 const navbarContent = {
   brand: brandLogo,
@@ -113,15 +114,23 @@ function Home() {
 
           <div className="flex flex-wrap w-full gap-10 justify-center pt-36">
             {services.map((item, index) => (
-              <ServiceItem
-                {...item}
-                key={item.id} // Use a unique identifier instead of index
-                className={
-                  index % 2 === 0
-                    ? "rotate-[-5deg] bg-white" // Ensure correct spacing and class names
-                    : "rotate-[5deg] bg-base-200"
-                }
-              />
+              <FadeInTransition key={item.id} delay={0.1 * index}>
+                <ServiceItem
+                  {...item}
+                  Use
+                  a
+                  unique
+                  identifier
+                  instead
+                  of
+                  index
+                  className={
+                    index % 2 === 0
+                      ? "rotate-[-5deg] bg-white" // Ensure correct spacing and class names
+                      : "rotate-[5deg] bg-base-200"
+                  }
+                />
+              </FadeInTransition>
             ))}
           </div>
 
@@ -134,11 +143,9 @@ function Home() {
               documentation, and build your guide or component library. Find all
               your components in one place and never lose your code.
             </p>
-            <a href={'/auth/github'}
-          className="btn btn-primary px-12"
-        >
-         Start Now
-        </a>
+            <a href={"/auth/github"} className="btn btn-primary px-12">
+              Start Now
+            </a>
           </div>
         </Feature>
       </div>

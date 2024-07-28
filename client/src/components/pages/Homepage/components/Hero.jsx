@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
-
+import FadeInSpring from "../../../animations/FadeInSpring";
 export default function Hero({ reverse = false, title, description, image }) {
   return (
+    <FadeInSpring>
     <div
       className={`flex w-full items-center justify-center gap-10 max-w-5xl mx-auto pt-36 ${
         reverse && "flex-row-reverse"
@@ -15,5 +16,6 @@ export default function Hero({ reverse = false, title, description, image }) {
         <p className="text-base-content/70">{description}</p>
       </div>
     </div>
+    </FadeInSpring>
   );
 }

@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+
+
 import Markdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import rehypeSanitize from 'rehype-sanitize';
@@ -7,8 +9,16 @@ import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import 'github-markdown-css/github-markdown.css';
 
 const MarkDownPreview = ({ selectedFileContent }) => {
+    // Function to remove the front matter
+    const removeFrontMatter = (content) => {
+        return content.replace(/---\n[\s\S]*?title:.*\n[\s\S]*?description:.*\n[\s\S]*?pubDate:.*\n[\s\S]*?author:.*\n[\s\S]*?---\n/, '');
+    };
+
+    // Clean the selected file content
+    const cleanedContent = removeFrontMatter(selectedFileContent);
+
     const MarkdownComponents = {
-        code({  inline, className, children, ...props }) {
+        code({ inline, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
             return !inline && match ? (
                 <SyntaxHighlighter
@@ -29,14 +39,12 @@ const MarkDownPreview = ({ selectedFileContent }) => {
 
     return (
         <div className="markdown-body w-full h-full bg-white border border-2 border-black overflow-y-scroll p-10">
-          
             <Markdown
                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                 components={MarkdownComponents}
             >
-                {selectedFileContent}
+                {cleanedContent}
             </Markdown>
-
             <div className='h-[200px]'></div>
         </div>
     );

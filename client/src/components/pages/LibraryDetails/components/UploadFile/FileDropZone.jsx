@@ -2,7 +2,12 @@
 import { DocumentTextIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
-  const allowedExtensions = [".js", ".jsx", ".tsx"];
+  const allowedExtensions = [
+    ".js", ".jsx", ".ts", ".tsx", ".py", ".java", ".rb", ".php",
+    ".html", ".css", ".cpp", ".c", ".go", ".rs", ".swift", ".kt", 
+    ".m", ".h", ".cs", ".json", ".xml", ".sh", ".yml", ".yaml", 
+    ".vue", ".svelte", ".qwik", ".astro"
+  ];
   const maxFiles = 4;
 
   const handleDragOver = (e) => e.preventDefault();
@@ -80,7 +85,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         type="file"
         onChange={handleFileSelect}
         style={{ display: "none" }}
-        accept=".js,.jsx,.tsx"
+        accept={allowedExtensions.join(",")}
         id="fileUpload"
         multiple
       />

@@ -230,7 +230,8 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
             const markdownContent = createMarkdown(file.originalname, explanation, content);
 
             const cleanPath = uploadPath.startsWith('/') ? uploadPath.substring(1) : uploadPath;
-            const markdownFilePath = `${cleanPath}/${file.originalname.replace(/\.(jsx?|tsx?)$/, '.md')}`;
+            const markdownFilePath = `${cleanPath}/${file.originalname.replace(/\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/, '.md')}`;
+
 
             const response = await octokit.rest.repos.createOrUpdateFileContents({
                 owner: req.user.profile.username,

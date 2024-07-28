@@ -230,8 +230,16 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
             const markdownContent = createMarkdown(file.originalname, explanation, content);
 
             const cleanPath = uploadPath.startsWith('/') ? uploadPath.substring(1) : uploadPath;
-            const markdownFilePath = `${cleanPath}/${file.originalname.replace(/\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/, '.md')}`;
+            let baseFileName = file.originalname.replace(/\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/, '');
+            let extension = '.md';
+            let markdownFilePath = `${cleanPath}/${baseFileName}${extension}`;
 
+            // Check if file exists and append version number if necessary
+            let version = 1;
+            while (await fileExists(octokit, req.user.profile.username, repository, markdownFilePath)) {
+                markdownFilePath = `${cleanPath}/${baseFileName}_v${version}${extension}`;
+                version++;
+            }
 
             const response = await octokit.rest.repos.createOrUpdateFileContents({
                 owner: req.user.profile.username,
@@ -253,6 +261,23 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
         res.status(500).send('Failed to upload files');
     }
 });
+
+// Helper function to check if a file exists in the repository
+async function fileExists(octokit, owner, repo, path) {
+    try {
+        await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path
+        });
+        return true;
+    } catch (error) {
+        if (error.status === 404) {
+            return false;
+        }
+        throw error;
+    }
+}
 
 
 

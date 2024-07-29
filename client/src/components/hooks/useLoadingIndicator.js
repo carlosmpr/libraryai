@@ -41,6 +41,8 @@ const useLoadingIndicator = () => {
     isSuccess,
     isError,
     handleLoading,
+    setIsError,
+    setIsSuccess
   };
 };
 

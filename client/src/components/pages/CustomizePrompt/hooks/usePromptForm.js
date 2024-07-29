@@ -92,7 +92,7 @@ const usePromptForm = () => {
   const { userInstructions, setUserInstructions } = useInstructions();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen } = useLoadingIndicator();
+  const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen,setIsError  } = useLoadingIndicator();
   const [formState, setFormState] = useState({
     selectedFile: null,
     selectedExample: "",
@@ -147,11 +147,12 @@ const usePromptForm = () => {
     setCurrentAction("runTest");
     setIsModalOpen(true);
 
+
     const { selectedFile, selectedModel, selectedExample } = formState;
 
     if (!selectedFile || !selectedModel || !selectedExample) {
-      alert("Please fill in all fields");
-      setIsModalOpen(false);
+     
+      setIsError(true)
       return;
     }
 
@@ -187,8 +188,8 @@ const usePromptForm = () => {
     const { instructionName, selectedModel, selectedExample } = formState;
 
     if (!instructionName || !selectedModel || !selectedExample) {
-      alert("Please fill in all fields");
-      setIsModalOpen(false);
+      setIsError(true)
+    
       return;
     }
 

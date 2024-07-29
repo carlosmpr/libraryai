@@ -45,6 +45,7 @@ const UploadForm = ({
           <input
             type="text"
             value={uploadPath}
+            readOnly
             onChange={(e) => setUploadPath(e.target.value)}
             placeholder="Selected Directory Path"
             className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"

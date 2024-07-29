@@ -35,6 +35,7 @@ const PromptForm = ({
             className="select w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-xs"
             onChange={handleInputChange}
             value={selectedModel}
+            required
           >
             <option disabled value="">
               Select Model
@@ -51,6 +52,7 @@ const PromptForm = ({
             type="file"
             className="file-input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-xs"
             onChange={handleFileChange}
+            required
           />
         </label>
 
@@ -78,6 +80,7 @@ const PromptForm = ({
             className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4 max-w-xs"
             value={instructionName}
             onChange={handleInputChange}
+            required
           />
         </label>
 
@@ -89,6 +92,7 @@ const PromptForm = ({
             placeholder="Instructions"
             value={selectedExample}
             onChange={handleInputChange}
+            required
           />
         </label>
         <div className="flex w-full justify-between">

@@ -1,5 +1,5 @@
 import MarkDownPreview from '../../ui/MarkDownPreview';
-import PromptForm from './components/PromptForm';
+import PromptForm from './PromptForm';
 import Popup from '../../ui/PopUp';
 import usePromptForm from './hooks/usePromptForm';
 
@@ -24,7 +24,7 @@ export default function CustomizePrompt() {
 
   const handleClose = () => {
     setIsModalOpen(false);
-    if (currentAction === 'saveInstructions') {
+    if (currentAction === 'saveInstructions' && !isError) {
       navigate(-1);
     }
   };

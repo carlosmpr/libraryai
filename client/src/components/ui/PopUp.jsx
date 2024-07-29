@@ -64,53 +64,55 @@ const Popup = ({
           <h2 className="font-bold text-3xl">{title}</h2>
           <p className="text-base-content/70 text-sm">{description}</p>
         </div>
-        <AnimatePresence>
-          {isLoading && (
+        <div className="relative">
+          <AnimatePresence>
+            {isLoading && (
+              <motion.div
+                key="loading"
+                initial={{ opacity: 0, x: '-100%' }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: '100%' }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0 flex items-center justify-center z-10"
+              >
+                <div className="flex">
+                  <span className="loading loading-dots loading-lg"></span>
+                  <span className="loading loading-dots loading-lg"></span>
+                  <span className="loading loading-dots loading-lg"></span>
+                  <span className="loading loading-dots loading-lg"></span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showMessage && (
+              <motion.div
+                key="message"
+                initial={{ opacity: 0, x: '-100%' }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: '100%' }}
+                transition={{ duration: 0.5 }}
+                className="absolute inset-0 flex items-center justify-center bg-opacity-75 z-10"
+              >
+                <div className={`message ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
+                  {isSuccess ? successMessage : errorMessage}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          {!isLoading && !showMessage && (
             <motion.div
-              key="loading"
-              initial={{ opacity: 0, x: '-100%' }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: '100%' }}
+              key="form"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10"
+              className="relative"
             >
-              <div className="flex">
-                <span className="loading loading-dots loading-lg"></span>
-                <span className="loading loading-dots loading-lg"></span>
-                <span className="loading loading-dots loading-lg"></span>
-                <span className="loading loading-dots loading-lg"></span>
-              </div>
+              {children}
             </motion.div>
           )}
-        </AnimatePresence>
-        {!isLoading && !showMessage && (
-          <motion.div
-            key="form"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative"
-          >
-            {children}
-          </motion.div>
-        )}
-        <AnimatePresence>
-          {showMessage && (
-            <motion.div
-              key="message"
-              initial={{ scale: 0.5, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.5, opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-75 z-10"
-            >
-              <div className={`message ${isSuccess ? 'text-green-500' : 'text-red-500'}`}>
-                {isSuccess ? successMessage : errorMessage}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        </div>
         <button type="button" className="absolute top-5 right-10" onClick={onClose}>
           <XMarkIcon className="w-6" />
         </button>

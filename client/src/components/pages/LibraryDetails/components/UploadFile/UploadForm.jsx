@@ -65,8 +65,8 @@ const UploadForm = ({
 
         {!loading && (
           <div className="mb-4 w-full">
-            <h3>Select Custom Prompt Instruction:</h3>
-            <div className="flex overflow-x-scroll gap-2 w-full">
+            <h3 className="font-semibold">Custom Instruction:</h3>
+            <div className="flex overflow-x-scroll gap-2 w-full mt-4">
               {userInstructions.map((instruction) => (
                 <button
                   key={instruction.id}
@@ -89,8 +89,8 @@ const UploadForm = ({
           {isLoading ? "Uploading..." : "Upload File"}
         </button>
       </div>
-      <div className="flex flex-col flex-1">
-        <h3>Directory Tree:</h3>
+      <div className="flex flex-col flex-1 mb-4">
+        <h3 className="font-semibold">Select a Directory:</h3>
         {dirView}
       </div>
     </form>

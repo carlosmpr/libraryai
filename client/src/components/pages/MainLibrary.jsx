@@ -1,12 +1,13 @@
-import Heading from "../ui/Heading";
-import BentoCard from "../ui/BentoCard";
-import Modal from "../ui/Modal";
-import Skeleton from "../ui/Skeleton";
-import FadeInTransition from "../animations/FadeTransition";
-import LoadingIndicator from "../ui/LoadingIndiicator";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { useMainLibrary } from "../context/MainLibraryContext";
-import SideBar from "../ui/SideBar";
+/* eslint-disable react/prop-types */
+
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import Heading from '../ui/Heading';
+import BentoCard from '../ui/BentoCard';
+import Skeleton from '../ui/Skeleton';
+import FadeInTransition from '../animations/FadeTransition';
+import Popup from '../ui/PopUp';
+import { useMainLibrary } from '../context/MainLibraryContext';
+import SideBar from '../ui/SideBar';
 
 const MainLibrary = () => {
   const {
@@ -24,11 +25,17 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
+  const handleClose = () => {
+    setIsModalOpen(false);
+    setNewRepoName('');
+    setNewRepoDescription('');
+  };
+
   return (
     <div className="flex bg-orange-50 h-screen">
-     <SideBar />
-      <div className="p-10  w-full h-full overflow-y-scroll">
-        <Heading title={"Select your library"} decoration={"Libraries"} />
+      <SideBar />
+      <div className="p-10 w-full h-full overflow-y-scroll">
+        <Heading title="Select your library" decoration="Libraries" />
 
         <div className="flex flex-wrap justify-evenly gap-10 mt-10">
           <button
@@ -39,46 +46,50 @@ const MainLibrary = () => {
             <span>Create New Library</span>
           </button>
 
-          <Modal
-            modalId="create_library_modal"
+          <Popup
+            popupId="create_library_modal"
             isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
+            onClose={handleClose}
             title="Create A New Library"
             description="Enter the name and description of the new library."
+            isLoading={isLoading}
+            isSuccess={isSuccess}
+            isError={isError}
+            successMessage="Library created successfully!"
+            errorMessage="Failed to create library."
+            customStyle="w-[500px] p-5 rounded-2xl"
+            onSuccess={() => {
+              setIsModalOpen(false);
+              setNewRepoName('');
+              setNewRepoDescription('');
+            }}
           >
-            <LoadingIndicator
-              isLoading={isLoading}
-              isSuccess={isSuccess}
-              isError={isError}
-              successMessage="Library created successfully!"
-              errorMessage="Failed to create library."
-            >
-              <form onSubmit={onSubmit} className="space-y-4">
-                <input
-                  type="text"
-                  value={newRepoName}
-                  onChange={(e) => setNewRepoName(e.target.value)}
-                  placeholder="Library Name"
-                  required
-                  className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
-                />
-                <textarea
-                  value={newRepoDescription}
-                  onChange={(e) => setNewRepoDescription(e.target.value)}
-                  placeholder="Library Description"
-                  required
-                  className="textarea w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
-                />
-                <button
-                  type="submit"
-                  disabled={isLoading}
-                  className="btn btn-primary"
-                >
-                  {isLoading ? "Creating..." : "Create Library"}
-                </button>
-              </form>
-            </LoadingIndicator>
-          </Modal>
+            <form onSubmit={onSubmit} className="space-y-4">
+              <input
+                type="text"
+                value={newRepoName}
+                onChange={(e) => setNewRepoName(e.target.value)}
+                placeholder="Library Name"
+                required
+                className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
+              />
+              <textarea
+                value={newRepoDescription}
+                onChange={(e) => setNewRepoDescription(e.target.value)}
+                placeholder="Library Description"
+                required
+                className="textarea w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
+              />
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn btn-primary"
+              >
+                {isLoading ? 'Creating...' : 'Create Library'}
+              </button>
+            </form>
+          </Popup>
+
           {loading ? (
             <Skeleton />
           ) : (
@@ -86,7 +97,7 @@ const MainLibrary = () => {
               <FadeInTransition key={repo.id} delay={0.2 * index}>
                 <BentoCard
                   title={repo.name}
-                  description={repo.description || "No description provided"}
+                  description={repo.description || 'No description provided'}
                 />
               </FadeInTransition>
             ))

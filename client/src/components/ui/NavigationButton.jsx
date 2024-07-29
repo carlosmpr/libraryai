@@ -41,7 +41,7 @@ export default function PromptNavigations() {
   };
 
   return (
-    <div className="flex flex-col gap-4 mt-auto">
+    <div className="flex flex-col gap-4 mt-auto relative z-30">
       <NavigationButton
         to="/userPrompts"
         icon={AdjustmentsHorizontalIcon}

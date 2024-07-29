@@ -1,6 +1,6 @@
 import MarkDownPreview from '../../ui/MarkDownPreview';
 import PromptForm from './components/PromptForm';
-import LoadingModal from './components/LoadingModal';
+import Popup from '../../ui/PopUp';
 import usePromptForm from './hooks/usePromptForm';
 
 export default function CustomizePrompt() {
@@ -22,22 +22,28 @@ export default function CustomizePrompt() {
     navigate,
   } = usePromptForm();
 
+  const handleClose = () => {
+    setIsModalOpen(false);
+    if (currentAction === 'saveInstructions') {
+      navigate(-1);
+    }
+  };
+
   return (
     <div className="flex bg-orange-50 h-screen">
-      <LoadingModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
+      <Popup
+        popupId="loading_modal"
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        title="Processing"
+        description="Please wait while we process your request."
         isLoading={isLoading}
         isSuccess={isSuccess}
         isError={isError}
         successMessage="Operation completed successfully!"
         errorMessage="An error occurred."
-        onSuccess={() => {
-          setIsModalOpen(false);
-          if (currentAction === "saveInstructions") {
-            navigate(-1);
-          }
-        }}
+        customStyle="w-[500px] p-5 rounded-2xl"
+        onSuccess={handleClose}
       />
 
       <PromptForm
@@ -51,7 +57,7 @@ export default function CustomizePrompt() {
         navigate={navigate}
       />
 
-      <div className="flex  flex-1 h-screen overflow-y-scroll px-20">
+      <div className="flex flex-1 h-screen overflow-y-scroll px-20">
         {markdownContent && <MarkDownPreview selectedFileContent={markdownContent} />}
       </div>
     </div>

@@ -85,7 +85,7 @@ Use GPT-3.5-Turbo for generating markdown documentation. Ensure the content is c
 By following these guidelines, you can create effective custom prompts and instructions to enhance your documentation process with Code Library.
 
 Happy Documenting! 📄✨
-`
+`;
 
 const usePromptForm = () => {
   const { repoName } = useParams();

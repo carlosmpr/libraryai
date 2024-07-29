@@ -4,6 +4,7 @@ import { ensureAuthenticated } from '../../middleware/authMiddleware.mjs';
 import multer from 'multer';
 import { createFile } from '../../helpers/aiHelper.mjs';
 import { createMarkdown } from '../../helpers/helpers.mjs';
+import { sanitizeCreateRepository } from '../../helpers/formValidations.mjs';
 
 const router = express.Router();
 const storage = multer.memoryStorage();
@@ -14,13 +15,17 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
     const octokit = new Octokit({ auth: token });
 
     try {
-        let { name, description } = req.body; // Repository name and description passed from the client
-        name = `library-${name}`; // Add the 'library-' prefix
+        let { name, description } = req.body;
+
+        // Validate and sanitize inputs
+        const { sanitizedTitle, sanitizedDescription } = sanitizeCreateRepository(name, description);
+
+        const repoName = `library-${sanitizedTitle}`; // Add the 'library-' prefix
 
         // Create the repository with a description and auto-init (default README)
         const response = await octokit.rest.repos.createForAuthenticatedUser({
-            name,
-            description,
+            name: repoName,
+            description: sanitizedDescription,
             private: false, // Change to true if you want it to be private
             auto_init: true, // Create an initial commit with a README
         });
@@ -28,7 +33,7 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         // Fetch the README file to get its sha
         const readmeResponse = await octokit.rest.repos.getContent({
             owner: response.data.owner.login,
-            repo: name,
+            repo: repoName,
             path: 'README.md',
         });
 
@@ -39,9 +44,9 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         const fullName = req.user.profile.displayName || req.user.profile.username;
 
         const readmeContent = `
-        # ${name}
+        # ${repoName}
         
-        ${description}
+        ${sanitizedDescription}
         
         ## About
         
@@ -70,13 +75,10 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
         SOFTWARE.
         `;
-        
-        
-        
 
         await octokit.rest.repos.createOrUpdateFileContents({
             owner: response.data.owner.login,
-            repo: name,
+            repo: repoName,
             path: 'README.md',
             message: 'Update README with initial content',
             content: Buffer.from(readmeContent).toString('base64'),
@@ -93,6 +95,10 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         res.status(500).send('Failed to create repository');
     }
 });
+
+
+
+
 
 const createOrUpdateFile = async (octokit, owner, repo, path, message, content) => {
     try {

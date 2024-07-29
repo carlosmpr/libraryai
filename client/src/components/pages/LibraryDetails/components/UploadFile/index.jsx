@@ -1,15 +1,14 @@
 import { useState } from "react";
-import Modal from "../../../../ui/Modal";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
-import LoadingIndicator from "../../../../ui/LoadingIndiicator";
 import useLoadingIndicator from "../../../../hooks/useLoadingIndicator";
 import UploadForm from "./UploadForm";
 import DirView from "./DirView";
 import { useLibrary } from "../../context/LibraryContext";
 import { useInstructions } from "../../../../context/UserInstructions";
+import Popup from "../../../../ui/PopUp";
 
 const UploadFile = () => {
-  const { repoName, loadContents, uploadPath,setUploadPath } = useLibrary();
+  const { repoName, loadContents, uploadPath, setUploadPath } = useLibrary();
   const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [newDirectory, setNewDirectory] = useState("");
@@ -39,7 +38,7 @@ const UploadFile = () => {
     });
 
     if (response.ok) {
-      handleModalClose();
+      console.log(response)
     } else {
       console.error("Failed to upload file");
       throw new Error("Failed to upload file");
@@ -74,38 +73,35 @@ const UploadFile = () => {
         <ArrowUpTrayIcon className="w-8" />
         Add new File
       </button>
-      <Modal
-        modalId="upload_file_modal"
+      <Popup
+        popupId="upload_file_modal"
         title="Upload New File"
         description="Select a file to upload to the repository."
         isOpen={isModalOpen}
         onClose={handleModalClose}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
+        isError={isError}
+        successMessage="File uploaded successfully!"
+        errorMessage="Failed to upload file."
+        onSuccess={loadContents}
         customStyle="w-[1050px] h-[90%] p-10 rounded-2xl"
       >
-        <LoadingIndicator
+        <UploadForm
+          selectedFiles={selectedFiles}
+          setSelectedFiles={setSelectedFiles}
+          setError={setError}
+          error={error}
+          handleClearFiles={handleClearFiles}
+          handleSubmit={handleSubmit}
           isLoading={isLoading}
-          isSuccess={isSuccess}
-          isError={isError}
-          successMessage="File uploaded successfully!"
-          errorMessage="Failed to upload file."
-          onSuccess={loadContents}
-        >
-          <UploadForm
-            selectedFiles={selectedFiles}
-            setSelectedFiles={setSelectedFiles}
-            setError={setError}
-            error={error}
-            handleClearFiles={handleClearFiles}
-            handleSubmit={handleSubmit}
-            isLoading={isLoading}
-            newDirectory={newDirectory}
-            setNewDirectory={setNewDirectory}
-            selectedInstruction={selectedInstruction}
-            setSelectedInstruction={setSelectedInstruction}
-            dirView={<DirView />}
-          />
-        </LoadingIndicator>
-      </Modal>
+          newDirectory={newDirectory}
+          setNewDirectory={setNewDirectory}
+          selectedInstruction={selectedInstruction}
+          setSelectedInstruction={setSelectedInstruction}
+          dirView={<DirView />}
+        />
+      </Popup>
     </>
   );
 };

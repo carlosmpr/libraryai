@@ -1,49 +1,51 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
-import Modal from "../../../ui/Modal";
 import { FolderPlusIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useLibrary } from "../context/LibraryContext";
 import DirStructureOptions from './DirStructureOptions';
+import Popup from "../../../ui/PopUp";
 
 const CreateFolder = () => {
   const { repoName, loadContents } = useLibrary();
-  const { isModalOpen, setIsModalOpen } = useLoadingIndicator();
-  const [creatingFolder, setCreatingFolder] = useState(false);
+  const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedStructure, setSelectedStructure] = useState(null);
 
-  const handleCreateFolder = async (e) => {
-    e.preventDefault();
-    setCreatingFolder(true);
+  const handleCreateFolder = async () => {
+    const response = await fetch("/api/create-folder", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({
+        structure: selectedStructure,
+        repository: repoName,
+      }),
+    });
 
-    try {
-      const response = await fetch("/api/create-folder", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          structure: selectedStructure,
-          repository: repoName,
-        }),
-      });
-
-      if (response.ok) {
-        loadContents();
-        setIsModalOpen(false);
-      } else {
-        console.error("Failed to create folder");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setCreatingFolder(false);
+    if (response.ok) {
+     console.log(response)
+      
+    } else {
+      console.error("Failed to create folder");
+      throw new Error("Failed to create folder");
     }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleLoading(handleCreateFolder);
   };
 
   const handleStructureSelect = (structure) => {
     setSelectedStructure(structure);
+  };
+
+  const handleClose = () => {
+    setIsModalOpen(false);
+    loadContents();
+    setSelectedStructure(null);
   };
 
   return (
@@ -55,26 +57,31 @@ const CreateFolder = () => {
         <FolderPlusIcon className="w-8" />
         Add Structure
       </button>
-      <Modal
-        isOpen={isModalOpen}
-        modalId="create_folder_modal"
+      <Popup
+        popupId="create_folder_modal"
         title="Add New Folder"
         description="Select a folder structure to add."
-        triggerButtonLabel="Add New Folder"
-        triggerButtonClass="btn-outline btn-primary"
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isModalOpen}
+        onClose={handleClose}
+        isLoading={isLoading}
+        isSuccess={isSuccess}
+        isError={isError}
+        successMessage="Folder created successfully!"
+        errorMessage="Failed to create folder."
+        onSuccess={loadContents}
+        customStyle="w-[500px] p-5 rounded-2xl"
       >
-        <form onSubmit={handleCreateFolder}>
+        <form onSubmit={handleSubmit}>
           <DirStructureOptions onSelect={handleStructureSelect} selectedStructure={selectedStructure} />
           <button
             type="submit"
-            disabled={creatingFolder || !selectedStructure}
-            className="btn btn-primary"
+            disabled={isLoading || !selectedStructure}
+            className="btn btn-primary mt-4"
           >
-            {creatingFolder ? "Creating..." : "Create Folder"}
+            {isLoading ? "Creating..." : "Create Folder"}
           </button>
         </form>
-      </Modal>
+      </Popup>
     </>
   );
 };

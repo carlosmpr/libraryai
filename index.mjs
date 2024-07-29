@@ -5,6 +5,7 @@ import session from 'express-session';
 import { config } from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { WebSocketServer } from 'ws';
 import githubRoutes from './routes/github/githubRoutes.mjs';
 import clientRoutes from './routes/clientRoutes.mjs';
 import aiRoutes from './routes/aiRoutes.mjs';
@@ -76,6 +77,17 @@ app.use('/', clientRoutes);
 app.use('/api', githubRoutes);
 app.use('/ai', aiRoutes);
 
-app.listen(port, () => {
+// Setup WebSocket server
+const server = app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+const wss = new WebSocketServer({ server });
+
+wss.on('connection', (ws, req) => {
+    const userId = req.headers['sec-websocket-protocol']; // Assuming user ID is passed as a subprotocol
+    ws.userId = userId;
+    console.log('WebSocket connection established for user:', userId);
+});
+
+export { wss };

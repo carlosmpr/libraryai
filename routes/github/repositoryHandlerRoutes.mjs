@@ -5,7 +5,7 @@ import multer from 'multer';
 import { createFile } from '../../helpers/aiHelper.mjs';
 import { createMarkdown } from '../../helpers/helpers.mjs';
 import { sanitizeCreateRepository } from '../../helpers/formValidations.mjs';
-
+import { wss } from '../../index.mjs';
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
@@ -215,8 +215,6 @@ router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
         res.status(500).send('Failed to fetch repositories');
     }
 });
-
-
 router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async (req, res) => {
     if (!req.files || req.files.length === 0) {
         return res.status(400).send('No files uploaded.');
@@ -225,9 +223,11 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
     const { repository, path: uploadPath, model, instructions } = req.body;
     const token = req.user.accessToken;
     const octokit = new Octokit({ auth: token });
+    const userId = req.user.id;
 
     try {
         const results = [];
+        let processedFiles = 0;
 
         for (const file of req.files) {
             const content = file.buffer.toString('utf8');
@@ -256,6 +256,20 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
             });
 
             results.push(response.data);
+
+            // Increment the progress after processing each file and send progress update
+            processedFiles++;
+            const progress = (processedFiles / req.files.length) * 100;
+            console.log(`Processed Files: ${processedFiles}, Progress: ${progress}%`); // Debug log
+            wss.clients.forEach(client => {
+                if (client.readyState === 1){
+                    console.log(`Sending progress to client ${client.userId}: ${progress}%`);
+                    client.send(JSON.stringify({ progress }));
+                }
+            });
+
+            // Ensure the message is sent before processing the next file
+            await new Promise(resolve => setTimeout(resolve, 0));
         }
 
         res.json({
@@ -284,11 +298,6 @@ async function fileExists(octokit, owner, repo, path) {
         throw error;
     }
 }
-
-
-
-
-
 
 
 export default router;

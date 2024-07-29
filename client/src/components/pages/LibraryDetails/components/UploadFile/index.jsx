@@ -5,6 +5,7 @@ import UploadForm from "./UploadForm";
 import DirView from "./DirView";
 import { useLibrary } from "../../context/LibraryContext";
 import { useInstructions } from "../../../../context/UserInstructions";
+import { useMainLibrary } from "../../../../context/MainLibraryContext";
 import Popup from "../../../../ui/PopUp";
 
 function UploadFile() {
@@ -15,10 +16,46 @@ function UploadFile() {
   const [error, setError] = useState("");
   const [selectedInstruction, setSelectedInstruction] = useState("");
   const { userInstructions } = useInstructions();
+  const { userProfile } = useMainLibrary(); // Get userProfile from MainLibraryContext
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     setUploadPath(newDirectory ? "" : uploadPath);
   }, [newDirectory, uploadPath, setUploadPath]);
+
+  useEffect(() => {
+    let ws;
+    if (isModalOpen && userProfile?.id) {
+      ws = new WebSocket(`ws://localhost:8080`, userProfile.id);
+      console.log(userProfile.id)
+
+      ws.onopen = () => {
+        console.log("WebSocket connection established");
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.progress !== undefined) {
+          console.log(`Upload progress: ${data.progress}%`);
+          setProgress(data.progress);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error("WebSocket error:", error);
+      };
+
+      ws.onclose = () => {
+        console.log("WebSocket connection closed");
+      };
+    }
+
+    return () => {
+      if (ws) {
+        ws.close();
+      }
+    };
+  }, [isModalOpen, userProfile]);
 
   const handleFileUpload = useCallback(async () => {
     if (selectedFiles.length === 0 || !(uploadPath || newDirectory)) return;
@@ -44,6 +81,9 @@ function UploadFile() {
     if (!response.ok) {
       throw new Error("Failed to upload file");
     }
+
+    const result = await response.json();
+    console.log("File upload response:", result); // Log the result from the server
   }, [selectedFiles, uploadPath, newDirectory, repoName, selectedInstruction, userInstructions]);
 
   const handleSubmit = useCallback((e) => {
@@ -58,6 +98,7 @@ function UploadFile() {
     setNewDirectory("");
     setIsModalOpen(false);
     setSelectedInstruction("");
+    setProgress(0);
   }, [setUploadPath, setIsModalOpen]);
 
   const handleClearFiles = useCallback(() => {
@@ -102,6 +143,9 @@ function UploadFile() {
           setSelectedInstruction={setSelectedInstruction}
           dirView={<DirView />}
         />
+        <div className="mt-4">
+          <p>Upload Progress: {progress}%</p>
+        </div>
       </Popup>
     </>
   );

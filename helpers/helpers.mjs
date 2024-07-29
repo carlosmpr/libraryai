@@ -6,7 +6,7 @@ function getCurrentDateFormatted() {
   
   // Function to create comprehensive Markdown content
   export function createMarkdown(filename, explanation, code) {
-    console.log(explanation)
+  
     const currentDate = getCurrentDateFormatted();
     // Frontmatter added to the markdown content
     const frontmatter = `---

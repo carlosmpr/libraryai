@@ -112,6 +112,7 @@ const UploadFile = () => {
     setError("");
   }, []);
 
+  console.log(progress)
   return (
     <>
       <button

@@ -26,7 +26,7 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
-  
+ 
 
   const handleClose = () => {
     setIsModalOpen(false);
@@ -40,7 +40,6 @@ const MainLibrary = () => {
     setIsModalOpen(false);
     setNewRepoName('');
     setNewRepoDescription('');
-    window.location.href = `/library/${newRepoName}`; // Redirect to the newly created library
   };
 
   return (

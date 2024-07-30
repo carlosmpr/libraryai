@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { createContext, useContext, useState, useEffect } from 'react';
 import useLoadingIndicator from '../hooks/useLoadingIndicator';
-import { useNavigate } from 'react-router-dom';
+
 const MainLibraryContext = createContext();
 
 export const useMainLibrary = () => useContext(MainLibraryContext);
@@ -13,7 +13,7 @@ export const MainLibraryProvider = ({ children }) => {
   const [newRepoName, setNewRepoName] = useState("");
   const [newRepoDescription, setNewRepoDescription] = useState("");
   const [userProfile, setUserProfile] = useState(null); // New state for user profile
-  const navigate = useNavigate();
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
@@ -45,7 +45,6 @@ export const MainLibraryProvider = ({ children }) => {
         if (response.ok) {
           const data = await response.json();
           setRepositories(data.repositories);
-          navigate(`/library/${newRepoName}`);
         } else {
           console.error("Failed to fetch repositories");
         }
@@ -71,11 +70,8 @@ export const MainLibraryProvider = ({ children }) => {
     if (response.ok) {
       const data = await response.json();
       setRepositories((prevRepos) => [...prevRepos, data.repository]);
-
-      setIsModalOpen(false);
-      setNewRepoName('');
-      setNewRepoDescription('');
-   
+      setNewRepoName("");
+      setNewRepoDescription("");
     } else {
       console.error("Failed to create repository");
       throw new Error("Failed to create repository");

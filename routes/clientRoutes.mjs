@@ -1,7 +1,7 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import {ensureAuthenticated} from '../middleware/authMiddleware.mjs'
+import {ensureAuthenticated} from './middleware/authMiddleware.mjs'
 
 const router = express.Router();
 

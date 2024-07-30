@@ -1,7 +1,7 @@
 import express from "express";
 import multer from "multer";
-import { createFile, transformCode } from "../helpers/aiHelper.mjs";
-import { ensureAuthenticated } from "../middleware/authMiddleware.mjs";
+import { createFile, transformCode } from "./helpers/aiHelper.mjs";
+import { ensureAuthenticated } from "./middleware/authMiddleware.mjs";
 
 const router = express.Router();
 const upload = multer();

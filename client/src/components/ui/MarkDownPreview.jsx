@@ -8,7 +8,7 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import 'github-markdown-css/github-markdown.css';
 
-const MarkDownPreview = ({ selectedFileContent }) => {
+const MarkDownPreview = ({ selectedFileContent, customStyle='px-10 pt-10 pb-32' }) => {
     // Function to remove the front matter
     const removeFrontMatter = (content) => {
         return content.replace(/---\n[\s\S]*?title:.*\n[\s\S]*?description:.*\n[\s\S]*?pubDate:.*\n[\s\S]*?author:.*\n[\s\S]*?---\n/, '');
@@ -38,14 +38,14 @@ const MarkDownPreview = ({ selectedFileContent }) => {
     };
 
     return (
-        <div className="markdown-body w-full h-full bg-white border border-2 border-black overflow-y-scroll p-10">
+        <div className={`markdown-body w-full h-full bg-white border border-2 border-black overflow-y-scroll  ${customStyle}`}>
             <Markdown
                 rehypePlugins={[rehypeRaw, rehypeSanitize]}
                 components={MarkdownComponents}
             >
                 {cleanedContent}
             </Markdown>
-            <div className='h-[200px]'></div>
+            
         </div>
     );
 };

@@ -11,6 +11,7 @@ import Breadcrumbs from "../../ui/BreadCrumbs";
 import { LibraryProvider, useLibrary } from "./context/LibraryContext";
 import SideBar from "../../ui/SideBar";
 import Skeleton from "../../ui/Skeleton";
+import TransformCode from "./components/TransformCode";
 
 const LibraryDetailsContent = () => {
   const { repoName, selectedFileContent, loading } = useLibrary();
@@ -47,6 +48,7 @@ const LibraryDetailsContent = () => {
           />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
+          <TransformCode selectedFileContent={selectedFileContent}/>
         </div>
       </div>
     </div>

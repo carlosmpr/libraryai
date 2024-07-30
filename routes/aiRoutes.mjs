@@ -1,6 +1,6 @@
 import express from "express";
 import multer from "multer";
-import { createFile } from "../helpers/aiHelper.mjs";
+import { createFile, transformCode } from "../helpers/aiHelper.mjs";
 import { ensureAuthenticated } from "../middleware/authMiddleware.mjs";
 
 const router = express.Router();
@@ -39,5 +39,20 @@ router.post(
     }
   }
 );
+
+
+router.post('/transform-code', ensureAuthenticated, async (req, res) => {
+  const { content, transformInstructions } = req.body;
+
+  try {
+      const result = await transformCode(content, transformInstructions);
+      console.log(result.text)
+      res.json(result.text);
+  } catch (error) {
+      console.error('Failed to transform code:', error);
+      res.status(500).send('Failed to transform code');
+  }
+});
+
 
 export default router;

@@ -23,6 +23,27 @@ export async function createFile(content, model = 'gpt-3.5-turbo', instructions 
 
 
 
+export async function transformCode(content, transformInstructions) {
+  if (!transformInstructions) {
+    throw new Error("Transformation instructions are required.");
+  }
+
+  const messages = [{ role: "user", content: content }];
+  
+  const systemInstructions = `Transform the following code based on these instructions: ${transformInstructions}. Return only the transformed code without any explanations or additional text.`;
+
+  const result = await generateText({
+    model: openai("gpt-4o-2024-05-13"),
+    system: systemInstructions,
+    messages,
+  });
+
+  return result;
+}
+
+
+
+
 
 
 

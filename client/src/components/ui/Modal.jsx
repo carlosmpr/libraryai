@@ -1,16 +1,17 @@
 /* eslint-disable react/prop-types */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const Modal = ({
+  buttonTitle,
   modalId,
   title,
   description,
   children,
-  isOpen,
-  onClose,
-  customStyle='modal-box',
+  customStyle = 'modal-box',
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   useEffect(() => {
     const dialog = document.getElementById(modalId);
 
@@ -19,22 +20,15 @@ const Modal = ({
     } else {
       dialog.close();
     }
+  }, [modalId, isOpen]);
 
-    const handleClose = () => {
-      if (onClose) {
-        onClose();
-      }
-    };
-
-    dialog.addEventListener("close", handleClose);
-
-    return () => {
-      dialog.removeEventListener("close", handleClose);
-    };
-  }, [modalId, isOpen, onClose]);
+  const handleClose = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
+      <button onClick={() => setIsOpen(true)} className="btn btn-primary">{buttonTitle}</button>
       <dialog id={modalId} className="modal">
         <div
           className={`relative bg-base-200 border border-2 border-black shadow-2xl shadow-white/40 ${customStyle}`}
@@ -44,15 +38,13 @@ const Modal = ({
             <p className="text-base-content/70 text-sm">{description}</p>
           </div>
           {children}
-          
-            <button
-              type="button"
-              className="absolute top-5 right-10"
-              onClick={onClose}
-            >
-              <XMarkIcon className="w-6" />
-            </button>
-          
+          <button
+            type="button"
+            className="absolute top-5 right-10"
+            onClick={handleClose}
+          >
+            <XMarkIcon className="w-6" />
+          </button>
         </div>
       </dialog>
     </>

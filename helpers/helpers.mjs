@@ -1,23 +1,25 @@
+import { wss } from "../index.mjs";
+
+
 function getCurrentDateFormatted() {
-    const date = new Date();
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
-    return date.toLocaleDateString('en-US', options);
-  }
-  
-  // Function to create comprehensive Markdown content
-  export function createMarkdown(filename, explanation, code) {
-  
-    const currentDate = getCurrentDateFormatted();
-    // Frontmatter added to the markdown content
-    const frontmatter = `---
-  title: '${filename.replace('.jsx', '')}'
+  const date = new Date();
+  const options = { year: "numeric", month: "long", day: "numeric" };
+  return date.toLocaleDateString("en-US", options);
+}
+
+// Function to create comprehensive Markdown content
+export function createMarkdown(filename, explanation, code, author) {
+  const currentDate = getCurrentDateFormatted();
+  // Frontmatter added to the markdown content
+  const frontmatter = `---
+  title: '${filename.replace(".jsx", "")}'
   description: 'component description'
   pubDate: '${currentDate}'
-  author: 'Carlos P'
+  author: '${author}'
   ---
   
   `;
-    return `${frontmatter}
+  return `${frontmatter}
   
   # ${filename}
   ${explanation}
@@ -27,57 +29,65 @@ function getCurrentDateFormatted() {
   ${code.trim()}
   \`\`\`
   `;
-  }
+}
 
-
-  export async function createOrUpdateFile(octokit, owner, repo, path, message, content){
-    try {
-        const { data } = await octokit.rest.repos.getContent({ owner, repo, path });
-        // Update the existing file with the correct sha
-        return octokit.rest.repos.createOrUpdateFileContents({
-            owner,
-            repo,
-            path,
-            message,
-            content: Buffer.from(content).toString('base64'),
-            sha: data.sha
-        });
-    } catch (error) {
-        if (error.status === 404) {
-            // Create the file if it does not exist
-            return octokit.rest.repos.createOrUpdateFileContents({
-                owner,
-                repo,
-                path,
-                message,
-                content: Buffer.from(content).toString('base64')
-            });
-        } else {
-            throw error;
-        }
-    }
-};
-
-
-
-export async function fileExists(octokit, owner, repo, path) {
+export async function createOrUpdateFile(
+  octokit,
+  owner,
+  repo,
+  path,
+  message,
+  content
+) {
   try {
-      await octokit.rest.repos.getContent({
-          owner,
-          repo,
-          path
-      });
-      return true;
+    const { data } = await octokit.rest.repos.getContent({ owner, repo, path });
+    // Update the existing file with the correct sha
+    return octokit.rest.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path,
+      message,
+      content: Buffer.from(content).toString("base64"),
+      sha: data.sha,
+    });
   } catch (error) {
-      if (error.status === 404) {
-          return false;
-      }
+    if (error.status === 404) {
+      // Create the file if it does not exist
+      return octokit.rest.repos.createOrUpdateFileContents({
+        owner,
+        repo,
+        path,
+        message,
+        content: Buffer.from(content).toString("base64"),
+      });
+    } else {
       throw error;
+    }
   }
 }
 
+export async function fileExists(octokit, owner, repo, path) {
+  try {
+    await octokit.rest.repos.getContent({
+      owner,
+      repo,
+      path,
+    });
+    return true;
+  } catch (error) {
+    if (error.status === 404) {
+      return false;
+    }
+    throw error;
+  }
+}
 
-export function initialReadme(repoName, sanitizedDescription, currentYear, fullName) {
+export function initialReadme(
+  repoName,
+  sanitizedDescription,
+  currentYear,
+  fullName
+) {
   return `
 # ${repoName}
 
@@ -112,3 +122,21 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 `;
 }
+
+
+export  function sendProgressUpdate  (processedFiles, totalFiles)  {
+  const progress = (processedFiles / totalFiles) * 100;
+  console.log(`Processed Files: ${processedFiles}, Progress: ${progress}%`);
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) {
+      console.log(`Sending progress to client ${client.userId}: ${progress}%`);
+      client.send(JSON.stringify({ progress }));
+    }
+  });
+};
+
+
+export function handleError  (res, message, error)  {
+  console.error(message, error);
+  res.status(500).send(message);
+};

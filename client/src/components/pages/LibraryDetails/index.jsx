@@ -48,7 +48,7 @@ const LibraryDetailsContent = () => {
           />
 
           <CodeDownload selectedFileContent={selectedFileContent} />
-          <TransformCode selectedFileContent={selectedFileContent}/>
+          <TransformCode selectedFileContent={selectedFileContent} />
         </div>
       </div>
     </div>

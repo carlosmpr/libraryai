@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { FolderIcon } from "@heroicons/react/24/outline";
 
 const DirStructureOptions = ({ onSelect, selectedStructure }) => {

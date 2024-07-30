@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { useMainLibrary } from "../../../context/MainLibraryContext";
 const DownloadOptions = ({ selectedFileContent, repoName }) => {

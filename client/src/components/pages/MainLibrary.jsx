@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import Heading from '../ui/Heading';

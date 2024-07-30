@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { DocumentTextIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 
 const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {

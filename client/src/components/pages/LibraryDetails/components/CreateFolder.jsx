@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { useState } from "react";
 import { FolderPlusIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// eslint-disable-next-line react/prop-types
+
 const LoadingIndicator = ({ isLoading, isSuccess, isError, successMessage, errorMessage, children, onSuccess }) => {
   const [showMessage, setShowMessage] = useState(false);
 

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 
 import { useInstructions } from "../context/UserInstructions";
 import { useState } from "react";
@@ -12,8 +12,9 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "../ui/BreadCrumbs";
 import SideBar from "../ui/SideBar";
 
-function ListPrompts({ id, name, instructions, model, onDelete }) {
+const ListPrompts = ({ id, name, instructions, model, onDelete }) => {
   const [expand, setExpand] = useState(false);
+
   const handleExpand = () => {
     setExpand(!expand);
   };
@@ -66,9 +67,9 @@ function ListPrompts({ id, name, instructions, model, onDelete }) {
       )}
     </div>
   );
-}
+};
 
-export default function UserPrompts() {
+const UserPrompts = () => {
   const { userInstructions, setUserInstructions } = useInstructions();
 
   const handleDeleteInstruction = async (id) => {
@@ -99,19 +100,19 @@ export default function UserPrompts() {
       <div className="flex bg-orange-50 h-screen">
         <SideBar />
         <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
-       <div className="py-6">
-          <Breadcrumbs />
+          <div className="py-6">
+            <Breadcrumbs />
           </div>
           <div className="h-[90%] overflow-y-scroll ">
-          {userInstructions.map((item) => (
-            <div key={item.id}>
-              <ListPrompts
-                key={item.id}
-                {...item}
-                onDelete={handleDeleteInstruction}
-              />
-            </div>
-          ))}
+            {userInstructions.map((item) => (
+              <div key={item.id}>
+                <ListPrompts
+                  key={item.id}
+                  {...item}
+                  onDelete={handleDeleteInstruction}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -119,4 +120,6 @@ export default function UserPrompts() {
   } else {
     return <div>No user default instructions</div>;
   }
-}
+};
+
+export default UserPrompts;

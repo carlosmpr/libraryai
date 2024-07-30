@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { useState } from "react";
 import MarkDownPreview from "../../../ui/MarkDownPreview";
 import Modal from "../../../ui/Modal";

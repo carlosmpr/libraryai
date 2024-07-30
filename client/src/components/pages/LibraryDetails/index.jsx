@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 import { useParams } from "react-router-dom";
 import FileTree from "./components/FileTree";
 import UploadFile from "./components/UploadFile";

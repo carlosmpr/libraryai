@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import FileDropZone from "./FileDropZone";
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { useLibrary } from "../../context/LibraryContext";

@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import { useState } from 'react';
 import { FolderIcon, FolderOpenIcon } from '@heroicons/react/24/outline';
 import { useLibrary } from '../../context/LibraryContext';

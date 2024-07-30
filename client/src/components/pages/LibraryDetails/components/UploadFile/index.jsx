@@ -8,7 +8,7 @@ import { useInstructions } from "../../../../context/UserInstructions";
 import { useMainLibrary } from "../../../../context/MainLibraryContext";
 import Popup from "../../../../ui/PopUp";
 
-function UploadFile() {
+const UploadFile = () => {
   const { repoName, loadContents, uploadPath, setUploadPath } = useLibrary();
   const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedFiles, setSelectedFiles] = useState([]);

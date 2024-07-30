@@ -3,7 +3,7 @@ import { Octokit } from '@octokit/rest';
 import { ensureAuthenticated } from '../../middleware/authMiddleware.mjs';
 import multer from 'multer';
 import { createFile } from '../../helpers/aiHelper.mjs';
-import { createMarkdown } from '../../helpers/helpers.mjs';
+import { createMarkdown, createOrUpdateFile, fileExists, initialReadme } from '../../helpers/helpers.mjs';
 import { sanitizeCreateRepository } from '../../helpers/formValidations.mjs';
 import { wss } from '../../index.mjs';
 const router = express.Router();
@@ -43,38 +43,10 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
         const currentYear = new Date().getFullYear();
         const fullName = req.user.profile.displayName || req.user.profile.username;
 
-        const readmeContent = `
-        # ${repoName}
-        
-        ${sanitizedDescription}
-        
-        ## About
-        
-        This repository is created with the Code-Library-App, an auto-documentation software powered by AI. It allows you to store your code in markdown files, creating documentation and storing them in GitHub. This tool is useful for creating UI, tutorials, guides, or simply storing and ensuring you don't lose your code or component code.
-         
-        
-        MIT License
-        
-        Copyright (c) ${currentYear} ${fullName}
-        
-        Permission is hereby granted, free of charge, to any person obtaining a copy
-        of this software and associated documentation files (the "Software"), to deal
-        in the Software without restriction, including without limitation the rights
-        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-        copies of the Software, and to permit persons to whom the Software is
-        furnished to do so, subject to the following conditions:
-        
-        The above copyright notice and this permission notice shall be included in all
-        copies or substantial portions of the Software.
-        
-        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-        SOFTWARE.
-        `;
+        const readmeContent = initialReadme(repoName,
+            sanitizedDescription,
+            currentYear,
+            fullName)
 
         await octokit.rest.repos.createOrUpdateFileContents({
             owner: response.data.owner.login,
@@ -90,6 +62,7 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
             repository: response.data,
             repositoryUrl: response.data.html_url
         });
+        
     } catch (error) {
         console.error('Failed to create repository:', error);
         res.status(500).send('Failed to create repository');
@@ -98,35 +71,6 @@ router.post('/create-repository', ensureAuthenticated, async (req, res) => {
 
 
 
-
-
-const createOrUpdateFile = async (octokit, owner, repo, path, message, content) => {
-    try {
-        const { data } = await octokit.rest.repos.getContent({ owner, repo, path });
-        // Update the existing file with the correct sha
-        return octokit.rest.repos.createOrUpdateFileContents({
-            owner,
-            repo,
-            path,
-            message,
-            content: Buffer.from(content).toString('base64'),
-            sha: data.sha
-        });
-    } catch (error) {
-        if (error.status === 404) {
-            // Create the file if it does not exist
-            return octokit.rest.repos.createOrUpdateFileContents({
-                owner,
-                repo,
-                path,
-                message,
-                content: Buffer.from(content).toString('base64')
-            });
-        } else {
-            throw error;
-        }
-    }
-};
 
 router.post('/create-folder', ensureAuthenticated, async (req, res) => {
     const token = req.user.accessToken;
@@ -215,6 +159,8 @@ router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
         res.status(500).send('Failed to fetch repositories');
     }
 });
+
+
 router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async (req, res) => {
     if (!req.files || req.files.length === 0) {
         return res.status(400).send('No files uploaded.');
@@ -282,22 +228,7 @@ router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async
     }
 });
 
-// Helper function to check if a file exists in the repository
-async function fileExists(octokit, owner, repo, path) {
-    try {
-        await octokit.rest.repos.getContent({
-            owner,
-            repo,
-            path
-        });
-        return true;
-    } catch (error) {
-        if (error.status === 404) {
-            return false;
-        }
-        throw error;
-    }
-}
+
 
 
 export default router;

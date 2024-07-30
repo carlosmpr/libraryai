@@ -8,6 +8,7 @@ import FadeInTransition from '../animations/FadeTransition';
 import Popup from '../ui/PopUp';
 import { useMainLibrary } from '../context/MainLibraryContext';
 import SideBar from '../ui/SideBar';
+import { useNavigate } from 'react-router-dom';
 
 const MainLibrary = () => {
   const {
@@ -25,10 +26,21 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
+  const navigate = useNavigate();
+
   const handleClose = () => {
     setIsModalOpen(false);
     setNewRepoName('');
     setNewRepoDescription('');
+  };
+
+  const handleSuccess = () => {
+    console.log('handleSuccess called');
+    console.log('New Repo Name:', newRepoName);
+    setIsModalOpen(false);
+    setNewRepoName('');
+    setNewRepoDescription('');
+    navigate(`/library/${newRepoName}`); // Redirect to the newly created library
   };
 
   return (
@@ -58,11 +70,7 @@ const MainLibrary = () => {
             successMessage="Library created successfully!"
             errorMessage="Failed to create library."
             customStyle="w-[500px] p-5 rounded-2xl"
-            onSuccess={() => {
-              setIsModalOpen(false);
-              setNewRepoName('');
-              setNewRepoDescription('');
-            }}
+            onSuccess={handleSuccess} // Use the handleSuccess function
           >
             <form onSubmit={onSubmit} className="space-y-4">
               <input

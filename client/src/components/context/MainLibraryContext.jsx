@@ -70,8 +70,7 @@ export const MainLibraryProvider = ({ children }) => {
     if (response.ok) {
       const data = await response.json();
       setRepositories((prevRepos) => [...prevRepos, data.repository]);
-      setNewRepoName("");
-      setNewRepoDescription("");
+   
     } else {
       console.error("Failed to create repository");
       throw new Error("Failed to create repository");

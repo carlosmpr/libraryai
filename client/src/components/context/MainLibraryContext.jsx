@@ -70,9 +70,8 @@ export const MainLibraryProvider = ({ children }) => {
     if (response.ok) {
       const data = await response.json();
       setRepositories((prevRepos) => [...prevRepos, data.repository]);
-      window.location.href = `/library/${newRepoName}`;
-      setNewRepoName("");
-      setNewRepoDescription("");
+      
+     
     
     } else {
       console.error("Failed to create repository");

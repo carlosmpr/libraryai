@@ -1,13 +1,13 @@
-/* eslint-disable react/prop-types */
+import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import Heading from "../ui/Heading";
+import BentoCard from "../ui/BentoCard";
+import Skeleton from "../ui/Skeleton";
+import FadeInTransition from "../animations/FadeTransition";
+import Popup from "../ui/PopUp";
+import { useMainLibrary } from "../context/MainLibraryContext";
+import SideBar from "../ui/SideBar";
 
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import Heading from '../ui/Heading';
-import BentoCard from '../ui/BentoCard';
-import Skeleton from '../ui/Skeleton';
-import FadeInTransition from '../animations/FadeTransition';
-import Popup from '../ui/PopUp';
-import { useMainLibrary } from '../context/MainLibraryContext';
-import SideBar from '../ui/SideBar';
+import { useNavigate } from "react-router-dom";
 
 const MainLibrary = () => {
   const {
@@ -25,10 +25,23 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
+
+  const navigate = useNavigate();
+
   const handleClose = () => {
     setIsModalOpen(false);
-    setNewRepoName('');
-    setNewRepoDescription('');
+    setNewRepoName("");
+    setNewRepoDescription("");
+  };
+
+  const handleSuccess = () => {
+    console.log("handleSuccess called");
+    console.log("New Repo Name:", newRepoName);
+    setIsModalOpen(false);
+  
+   
+    // Use window.location.href to navigate
+    navigate( `/library/${newRepoName}`);
   };
 
   return (
@@ -58,11 +71,7 @@ const MainLibrary = () => {
             successMessage="Library created successfully!"
             errorMessage="Failed to create library."
             customStyle="w-[500px] p-5 rounded-2xl"
-            onSuccess={() => {
-              setIsModalOpen(false);
-              setNewRepoName('');
-              setNewRepoDescription('');
-            }}
+            onSuccess={handleSuccess} // Use the handleSuccess function
           >
             <form onSubmit={onSubmit} className="space-y-4">
               <input
@@ -85,7 +94,7 @@ const MainLibrary = () => {
                 disabled={isLoading}
                 className="btn btn-primary"
               >
-                {isLoading ? 'Creating...' : 'Create Library'}
+                {isLoading ? "Creating..." : "Create Library"}
               </button>
             </form>
           </Popup>
@@ -97,7 +106,7 @@ const MainLibrary = () => {
               <FadeInTransition key={repo.id} delay={0.2}>
                 <BentoCard
                   title={repo.name}
-                  description={repo.description || 'No description provided'}
+                  description={repo.description || "No description provided"}
                 />
               </FadeInTransition>
             ))

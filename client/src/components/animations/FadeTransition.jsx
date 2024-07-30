@@ -1,13 +1,9 @@
-/* eslint-disable react/prop-types */
+
 "use client";
 import { LazyMotion, domAnimation, m } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 
-
-export default function FadeInTransition({
-  children,
-  delay = 0,
-})  {
+const FadeInTransition = ({ children, delay = 0 }) => {
   const { ref, inView } = useInView({
     triggerOnce: true, // Optional: Trigger animation only once
     threshold: 0.1, // Customize threshold as needed
@@ -28,12 +24,11 @@ export default function FadeInTransition({
         initial="hidden"
         animate={inView ? "visible" : "hidden"}
         variants={fadeInVariant}
-      
       >
         {children}
       </m.div>
     </LazyMotion>
   );
-}
+};
 
-
+export default FadeInTransition;

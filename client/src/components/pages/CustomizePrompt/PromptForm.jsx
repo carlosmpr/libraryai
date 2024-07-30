@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import Bot from '/bot.svg';

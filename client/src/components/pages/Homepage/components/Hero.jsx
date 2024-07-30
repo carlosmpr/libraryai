@@ -1,4 +1,4 @@
-/* eslint-disable react/prop-types */
+
 import FadeInSpring from "../../../animations/FadeInSpring";
 export default function Hero({ reverse = false, title, description, image }) {
   return (

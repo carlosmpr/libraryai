@@ -1,15 +1,15 @@
-/* eslint-disable react/prop-types */
+
 import { Link } from "react-router-dom";
 
-
-export default function Footer({ footerData = [], brand }) {
+const Footer = ({ footerData = [], brand }) => {
   const currentYear = new Date().getFullYear();
+  
   return (
     <>
-      <footer className="footer p-10    border border-t-2 border-black">
+      <footer className="footer p-10 border border-t-2 border-black">
         {footerData.map((item, index) => (
           <nav key={index}>
-            <h2 className="font-bold text-lg ">
+            <h2 className="font-bold text-lg">
               {item.title}
             </h2>
             {item.footerNav.map((footerItem, subIndex) => (
@@ -56,12 +56,14 @@ export default function Footer({ footerData = [], brand }) {
         </aside>
         <nav className="md:place-self-center md:justify-self-end">
           <div className="grid grid-flow-col gap-4">
-            <Link href="#">Facebook</Link>
-            <Link href="#">Twitter</Link>
-            <Link href="#">Instagram</Link>
+            <Link to="#">Facebook</Link>
+            <Link to="#">Twitter</Link>
+            <Link to="#">Instagram</Link>
           </div>
         </nav>
       </footer>
     </>
   );
-}
+};
+
+export default Footer;

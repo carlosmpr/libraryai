@@ -78,8 +78,8 @@ const Popup = ({
               >
              {progress !== undefined && (
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                    <p className="bg-gray-800 text-white px-3 py-1 rounded-md">
-                      Upload Progress: {progress}%
+                    <p className="bg-gray-800 text-white text-8xl px-3 py-1 rounded-md">
+                      {progress}%
                     </p>
                   </div>
                 )}

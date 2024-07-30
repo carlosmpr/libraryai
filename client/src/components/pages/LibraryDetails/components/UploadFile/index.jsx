@@ -26,8 +26,14 @@ function UploadFile() {
   useEffect(() => {
     let ws;
     if (isModalOpen && userProfile?.id) {
-      ws = new WebSocket(`ws://localhost:8080`, userProfile.id);
-      console.log(userProfile.id)
+      // Determine the WebSocket URL based on the environment
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsHost = window.location.host;
+      const wsUrl = `${wsProtocol}//${wsHost}`;
+
+      // Initialize WebSocket with dynamic URL
+      ws = new WebSocket(wsUrl, userProfile.id);
+      console.log("User ID:", userProfile.id);
 
       ws.onopen = () => {
         console.log("WebSocket connection established");

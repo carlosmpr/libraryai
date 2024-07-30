@@ -17,6 +17,7 @@ const Popup = ({
   children,
   customStyle = 'modal-box',
   onSuccess,
+  progress
 }) => {
   const [showMessage, setShowMessage] = useState(false);
 
@@ -75,6 +76,8 @@ const Popup = ({
                 transition={{ duration: 0.5 }}
                 className="absolute inset-0 flex items-center justify-center z-10"
               >
+                {progress && <p>Upload Progress: {progress}%</p>}
+                
                 <div className="flex">
                   <span className="loading loading-dots loading-lg"></span>
                   <span className="loading loading-dots loading-lg"></span>

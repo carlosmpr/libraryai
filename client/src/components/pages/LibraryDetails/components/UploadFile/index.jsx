@@ -134,6 +134,7 @@ const UploadFile = () => {
         errorMessage="Failed to upload file."
         onSuccess={loadContents}
         customStyle="w-[1050px] h-[90%] p-10 rounded-2xl"
+        progress={progress}
       >
         <UploadForm
           selectedFiles={selectedFiles}
@@ -149,9 +150,7 @@ const UploadFile = () => {
           setSelectedInstruction={setSelectedInstruction}
           dirView={<DirView />}
         />
-        <div className="mt-4">
-          <p>Upload Progress: {progress}%</p>
-        </div>
+       
       </Popup>
     </>
   );

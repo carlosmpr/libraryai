@@ -101,8 +101,8 @@ const MainLibrary = () => {
           {loading ? (
             <Skeleton />
           ) : (
-            repositories.map((repo, index) => (
-              <FadeInTransition key={repo.id} delay={0.2 * index}>
+            repositories.map((repo) => (
+              <FadeInTransition key={repo.id} delay={0.2}>
                 <BentoCard
                   title={repo.name}
                   description={repo.description || 'No description provided'}

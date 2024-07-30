@@ -1,4 +1,4 @@
-
+/* eslint-disable react/prop-types */
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import Heading from '../ui/Heading';
@@ -8,7 +8,6 @@ import FadeInTransition from '../animations/FadeTransition';
 import Popup from '../ui/PopUp';
 import { useMainLibrary } from '../context/MainLibraryContext';
 import SideBar from '../ui/SideBar';
-
 
 const MainLibrary = () => {
   const {
@@ -26,17 +25,7 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
- 
-
   const handleClose = () => {
-    setIsModalOpen(false);
-    setNewRepoName('');
-    setNewRepoDescription('');
-  };
-
-  const handleSuccess = () => {
-    console.log('handleSuccess called');
-    console.log('New Repo Name:', newRepoName);
     setIsModalOpen(false);
     setNewRepoName('');
     setNewRepoDescription('');
@@ -69,7 +58,11 @@ const MainLibrary = () => {
             successMessage="Library created successfully!"
             errorMessage="Failed to create library."
             customStyle="w-[500px] p-5 rounded-2xl"
-            onSuccess={handleSuccess} // Use the handleSuccess function
+            onSuccess={() => {
+              setIsModalOpen(false);
+              setNewRepoName('');
+              setNewRepoDescription('');
+            }}
           >
             <form onSubmit={onSubmit} className="space-y-4">
               <input
@@ -100,8 +93,8 @@ const MainLibrary = () => {
           {loading ? (
             <Skeleton />
           ) : (
-            repositories.map((repo) => (
-              <FadeInTransition key={repo.id} delay={0.2}>
+            repositories.map((repo, index) => (
+              <FadeInTransition key={repo.id} delay={0.2 * index}>
                 <BentoCard
                   title={repo.name}
                   description={repo.description || 'No description provided'}

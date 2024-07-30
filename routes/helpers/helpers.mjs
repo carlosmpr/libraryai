@@ -1,4 +1,4 @@
-import { wss } from "../index.mjs";
+import { wss } from "../../index.mjs";
 
 
 function getCurrentDateFormatted() {

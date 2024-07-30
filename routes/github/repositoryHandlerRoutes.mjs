@@ -1,8 +1,8 @@
 import express from "express";
 import { Octokit } from "@octokit/rest";
-import { ensureAuthenticated } from "../../middleware/authMiddleware.mjs";
+import { ensureAuthenticated } from "../middleware/authMiddleware.mjs";
 import multer from "multer";
-import { createFile } from "../../helpers/aiHelper.mjs";
+import { createFile } from "../helpers/aiHelper.mjs";
 import {
   createMarkdown,
   createOrUpdateFile,
@@ -10,8 +10,8 @@ import {
   initialReadme,
   sendProgressUpdate,
   handleError
-} from "../../helpers/helpers.mjs"
-import { sanitizeCreateRepository } from "../../helpers/formValidations.mjs";
+} from "../helpers/helpers.mjs"
+import { sanitizeCreateRepository } from "../helpers/formValidations.mjs";
 
 
 const router = express.Router();

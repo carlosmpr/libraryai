@@ -74,7 +74,7 @@ const Popup = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: '100%' }}
                 transition={{ duration: 0.5 }}
-                className="absolute inset-0 flex items-center justify-center z-10"
+                className="absolute inset-0 flex items-center justify-center z-10 h-full"
               >
              {progress !== undefined && (
                   <div className="absolute bottom-4 left-0 right-0 flex justify-center">

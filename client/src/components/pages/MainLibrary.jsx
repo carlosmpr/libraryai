@@ -30,8 +30,7 @@ const MainLibrary = () => {
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setNewRepoName("");
-    setNewRepoDescription("");
+   
   };
 
   const handleSuccess = () => {
@@ -39,7 +38,7 @@ const MainLibrary = () => {
     console.log("New Repo Name:", newRepoName);
     setIsModalOpen(false);
   
-   
+   setNewRepoName(newRepoName)
     // Use window.location.href to navigate
     navigate( `/library/${newRepoName}`);
   };

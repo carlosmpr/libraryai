@@ -71,9 +71,18 @@ const TransformCode = ({ selectedFileContent }) => {
 
   return (
     <>
-      <Modal buttonTitle={"Transform Code"} modalId={"transformCode"} customStyle="w-screen flex gap-4  bg-none h-screen overflow-y-scroll p-10">
+      <Modal buttonTitle={"Transform Code"} modalId={"transformCode"} customStyle="w-screen  h-screen  overflow-y-scroll px-10 pb-20">
+       
+       <div className="w-full text-center mb-4">
+       <h2 className="text-5xl font-bold">Code Transformation</h2>
+          <p className="text-xs max-w-xl mx-atuo">
+            This feature allows you to transform code into different formats or optimize it based on your selected instructions. 
+            Please note that this is an experimental feature. Ensure to check and revise the transformed code before using it in production.
+          </p>
+       </div>
+       <div className="w-full flex gap-4 h-full overflow-y-scroll">
         <div className="w-[40%]">
-          <h2>Original Code</h2>
+          <h2 className="font-semibold mb-4">Original Code</h2>
           <MarkDownPreview
             selectedFileContent={extractCodeBlocks(selectedFileContent).code}
             customStyle={'bg-red-200'}
@@ -103,11 +112,13 @@ const TransformCode = ({ selectedFileContent }) => {
           {isError && <p className="text-red-500">Failed to transform code</p>}
           {transformedCode && (
             <>
-              <h2>Transformed Code</h2>
+              <h2 className="font-semibold mb-4">Transformed Code</h2>
     
               <MarkDownPreview selectedFileContent={transformedCode} customStyle={'bg-green-200'} />
             </>
           )}
+        </div>
+        <div className="h-32"></div>
         </div>
       </Modal>
     </>

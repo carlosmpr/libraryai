@@ -28,7 +28,7 @@ const Modal = ({
 
   return (
     <>
-      <button onClick={() => setIsOpen(true)} className="btn btn-primary">{buttonTitle}</button>
+      <button onClick={() => setIsOpen(true)} className="btn btn-secondary">{buttonTitle}</button>
       <dialog id={modalId} className="modal">
         <div
           className={`relative bg-base-200 border border-2 border-black shadow-2xl shadow-white/40 ${customStyle}`}

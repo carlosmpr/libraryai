@@ -37,10 +37,7 @@ const MainLibrary = () => {
     console.log("handleSuccess called");
     console.log("New Repo Name:", newRepoName);
     setIsModalOpen(false);
-  
-   setNewRepoName(newRepoName)
-    // Use window.location.href to navigate
-    navigate( `/library/${newRepoName}`);
+    navigate( `/library/library-${newRepoName}`);
   };
 
   return (

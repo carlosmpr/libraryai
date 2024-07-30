@@ -1,233 +1,303 @@
-import express from "express";
-import { Octokit } from "@octokit/rest";
-import { ensureAuthenticated } from "../../middleware/authMiddleware.mjs";
-import multer from "multer";
-import { createFile } from "../../helpers/aiHelper.mjs";
-import {
-  createMarkdown,
-  createOrUpdateFile,
-  fileExists,
-  initialReadme,
-  sendProgressUpdate,
-  handleError
-} from "../../helpers/helpers.mjs"
-import { sanitizeCreateRepository } from "../../helpers/formValidations.mjs";
-
-
+import express from 'express';
+import { Octokit } from '@octokit/rest';
+import { ensureAuthenticated } from '../../middleware/authMiddleware.mjs';
+import multer from 'multer';
+import { createFile } from '../../helpers/aiHelper.mjs';
+import { createMarkdown } from '../../helpers/helpers.mjs';
+import { sanitizeCreateRepository } from '../../helpers/formValidations.mjs';
+import { wss } from '../../index.mjs';
 const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-const setupOctokit = (token) => new Octokit({ auth: token });
+router.post('/create-repository', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const octokit = new Octokit({ auth: token });
 
+    try {
+        let { name, description } = req.body;
 
+        // Validate and sanitize inputs
+        const { sanitizedTitle, sanitizedDescription } = sanitizeCreateRepository(name, description);
 
-router.post("/create-repository", ensureAuthenticated, async (req, res) => {
-  const token = req.user.accessToken;
-  const octokit = setupOctokit(token);
+        const repoName = `library-${sanitizedTitle}`; // Add the 'library-' prefix
 
-  try {
-    let { name, description } = req.body;
+        // Create the repository with a description and auto-init (default README)
+        const response = await octokit.rest.repos.createForAuthenticatedUser({
+            name: repoName,
+            description: sanitizedDescription,
+            private: false, // Change to true if you want it to be private
+            auto_init: true, // Create an initial commit with a README
+        });
 
-    const { sanitizedTitle, sanitizedDescription } = sanitizeCreateRepository(
-      name,
-      description
-    );
-    const repoName = `library-${sanitizedTitle}`;
+        // Fetch the README file to get its sha
+        const readmeResponse = await octokit.rest.repos.getContent({
+            owner: response.data.owner.login,
+            repo: repoName,
+            path: 'README.md',
+        });
 
-    const response = await octokit.rest.repos.createForAuthenticatedUser({
-      name: repoName,
-      description: sanitizedDescription,
-      private: false,
-      auto_init: true,
-    });
+        const readmeSha = readmeResponse.data.sha;
 
-    const readmeResponse = await octokit.rest.repos.getContent({
-      owner: response.data.owner.login,
-      repo: repoName,
-      path: "README.md",
-    });
+        // Optionally, add content to the README file
+        const currentYear = new Date().getFullYear();
+        const fullName = req.user.profile.displayName || req.user.profile.username;
 
-    const readmeContent = initialReadme(
-      repoName,
-      sanitizedDescription,
-      new Date().getFullYear(),
-      req.user.profile.displayName || req.user.profile.username
-    );
+        const readmeContent = `
+        # ${repoName}
+        
+        ${sanitizedDescription}
+        
+        ## About
+        
+        This repository is created with the Code-Library-App, an auto-documentation software powered by AI. It allows you to store your code in markdown files, creating documentation and storing them in GitHub. This tool is useful for creating UI, tutorials, guides, or simply storing and ensuring you don't lose your code or component code.
+         
+        
+        MIT License
+        
+        Copyright (c) ${currentYear} ${fullName}
+        
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
+        
+        The above copyright notice and this permission notice shall be included in all
+        copies or substantial portions of the Software.
+        
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+        SOFTWARE.
+        `;
 
-    await octokit.rest.repos.createOrUpdateFileContents({
-      owner: response.data.owner.login,
-      repo: repoName,
-      path: "README.md",
-      message: "Update README with initial content",
-      content: Buffer.from(readmeContent).toString("base64"),
-      sha: readmeResponse.data.sha,
-    });
+        await octokit.rest.repos.createOrUpdateFileContents({
+            owner: response.data.owner.login,
+            repo: repoName,
+            path: 'README.md',
+            message: 'Update README with initial content',
+            content: Buffer.from(readmeContent).toString('base64'),
+            sha: readmeSha, // Include the sha of the existing README file
+        });
 
-    res.json({
-      message: "Repository created successfully!",
-      repository: response.data,
-      repositoryUrl: response.data.html_url,
-    });
-  } catch (error) {
-    handleError(res, "Failed to create repository", error);
-  }
-});
-
-router.post("/create-folder", ensureAuthenticated, async (req, res) => {
-  const token = req.user.accessToken;
-  const { repository, structure } = req.body;
-  const octokit = setupOctokit(token);
-
-  try {
-    for (const folder of structure.structure) {
-      const path = `${folder}/.gitkeep`;
-      await createOrUpdateFile(octokit, req.user.profile.username, repository, path, "Create folder with .gitkeep", "");
+        res.json({
+            message: 'Repository created successfully!',
+            repository: response.data,
+            repositoryUrl: response.data.html_url
+        });
+    } catch (error) {
+        console.error('Failed to create repository:', error);
+        res.status(500).send('Failed to create repository');
     }
-    res.json({ message: "Selected folder structure created successfully!" });
-  } catch (error) {
-    handleError(res, "Failed to create selected folder structure", error);
-  }
 });
 
-router.get("/repository-contents", ensureAuthenticated, async (req, res) => {
-  const token = req.user.accessToken;
-  const { repo, path = "" } = req.query;
 
-  if (!repo) return res.status(400).send("Repository name is required.");
 
-  const octokit = setupOctokit(token);
 
-  try {
-    const response = await octokit.rest.repos.getContent({
-      owner: req.user.profile.username,
-      repo: repo,
-      path: path,
-      ref: "main",
-    });
 
-    const contents = Array.isArray(response.data)
-      ? response.data
-      : [response.data];
+const createOrUpdateFile = async (octokit, owner, repo, path, message, content) => {
+    try {
+        const { data } = await octokit.rest.repos.getContent({ owner, repo, path });
+        // Update the existing file with the correct sha
+        return octokit.rest.repos.createOrUpdateFileContents({
+            owner,
+            repo,
+            path,
+            message,
+            content: Buffer.from(content).toString('base64'),
+            sha: data.sha
+        });
+    } catch (error) {
+        if (error.status === 404) {
+            // Create the file if it does not exist
+            return octokit.rest.repos.createOrUpdateFileContents({
+                owner,
+                repo,
+                path,
+                message,
+                content: Buffer.from(content).toString('base64')
+            });
+        } else {
+            throw error;
+        }
+    }
+};
 
-    res.json({
-      message: "Repository contents fetched successfully!",
-      contents: contents.map((item) => ({
-        name: item.name,
-        path: item.path,
-        type: item.type,
-        download_url: item.download_url || null,
-        content: item.content
-          ? Buffer.from(item.content, "base64").toString("utf-8")
-          : null,
-      })),
-    });
-  } catch (error) {
-    handleError(res, "Failed to fetch repository contents", error);
-  }
+router.post('/create-folder', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const { repository, structure } = req.body;
+    const octokit = new Octokit({ auth: token });
+
+    const owner = req.user.profile.username;
+    const message = 'Create folder with .gitkeep';
+
+    try {
+        for (const folder of structure.structure) {
+            const path = `${folder}/.gitkeep`;
+            await createOrUpdateFile(octokit, owner, repository, path, message, '');
+        }
+
+        res.json({
+            message: 'Selected folder structure created successfully!'
+        });
+    } catch (error) {
+        console.error('Failed to create selected folder structure:', error);
+        res.status(500).send('Failed to create selected folder structure');
+    }
 });
 
-router.get("/repositories/library", ensureAuthenticated, async (req, res) => {
-  const token = req.user.accessToken;
-  const username = req.user.profile.username;
-  const octokit = setupOctokit(token);
 
-  try {
-    const { data } = await octokit.rest.search.repos({
-      q: `user:${username} library in:name`,
-      sort: "stars",
-      order: "desc",
-    });
+router.get('/repository-contents', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const { repo, path = '' } = req.query;
 
-    const filteredRepos = data.items.filter(
-      (repo) => !repo.name.startsWith(`library-${username}-config`)
-    );
+    if (!repo) {
+        return res.status(400).send('Repository name is required.');
+    }
 
-    res.json({
-      message: "Repositories fetched successfully!",
-      repositories: filteredRepos,
-    });
-  } catch (error) {
-    handleError(res, "Failed to fetch repositories", error);
-  }
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        const response = await octokit.rest.repos.getContent({
+            owner: req.user.profile.username,
+            repo: repo,
+            path: path,
+            ref: 'main'
+        });
+
+        const contents = Array.isArray(response.data) ? response.data : [response.data];
+
+        res.json({
+            message: 'Repository contents fetched successfully!',
+            contents: contents.map(item => ({
+                name: item.name,
+                path: item.path,
+                type: item.type,
+                download_url: item.download_url || null,
+                content: item.content ? Buffer.from(item.content, 'base64').toString('utf-8') : null
+            }))
+        });
+    } catch (error) {
+        console.error('Failed to fetch repository contents:', error);
+        res.status(500).send('Failed to fetch repository contents');
+    }
 });
 
-router.post(
-  "/upload-file",
-  ensureAuthenticated,
-  upload.array("files", 4),
-  async (req, res) => {
+
+
+
+router.get('/repositories/library', ensureAuthenticated, async (req, res) => {
+    const token = req.user.accessToken;
+    const username = req.user.profile.username;
+    const octokit = new Octokit({ auth: token });
+
+    try {
+        const { data } = await octokit.rest.search.repos({
+            q: `user:${username} library in:name`,
+            sort: 'stars',
+            order: 'desc'
+        });
+
+        // Filter out the config repositories
+        const filteredRepos = data.items.filter(repo => !repo.name.startsWith(`library-${username}-config`));
+
+        res.json({
+            message: 'Repositories fetched successfully!',
+            repositories: filteredRepos
+        });
+    } catch (error) {
+        console.error('Failed to fetch repositories:', error);
+        res.status(500).send('Failed to fetch repositories');
+    }
+});
+router.post('/upload-file', ensureAuthenticated, upload.array('files', 4), async (req, res) => {
     if (!req.files || req.files.length === 0) {
-      return res.status(400).send("No files uploaded.");
+        return res.status(400).send('No files uploaded.');
     }
 
     const { repository, path: uploadPath, model, instructions } = req.body;
     const token = req.user.accessToken;
-    const octokit = setupOctokit(token);
-    const author = req.user.profile.displayName || req.user.profile.username;
+    const octokit = new Octokit({ auth: token });
+    const userId = req.user.id;
 
     try {
-      const results = [];
-      let processedFiles = 0;
+        const results = [];
+        let processedFiles = 0;
 
-      for (const file of req.files) {
-        const content = file.buffer.toString("utf8");
-        const completion = await createFile(content, model, instructions);
-        const explanation = completion.text;
-        const markdownContent = createMarkdown(
-          file.originalname,
-          explanation,
-          content,
-          author
-        );
+        for (const file of req.files) {
+            const content = file.buffer.toString('utf8');
+            const completion = await createFile(content, model, instructions);
+            const explanation = completion.text;
+            const markdownContent = createMarkdown(file.originalname, explanation, content);
 
-        const cleanPath = uploadPath.startsWith("/")
-          ? uploadPath.substring(1)
-          : uploadPath;
-        let baseFileName = file.originalname.replace(
-          /\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/,
-          ""
-        );
-        let extension = ".md";
-        let markdownFilePath = `${cleanPath}/${baseFileName}${extension}`;
+            const cleanPath = uploadPath.startsWith('/') ? uploadPath.substring(1) : uploadPath;
+            let baseFileName = file.originalname.replace(/\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/, '');
+            let extension = '.md';
+            let markdownFilePath = `${cleanPath}/${baseFileName}${extension}`;
 
-        let version = 1;
-        while (
-          await fileExists(
-            octokit,
-            req.user.profile.username,
-            repository,
-            markdownFilePath
-          )
-        ) {
-          markdownFilePath = `${cleanPath}/${baseFileName}_v${version}${extension}`;
-          version++;
+            // Check if file exists and append version number if necessary
+            let version = 1;
+            while (await fileExists(octokit, req.user.profile.username, repository, markdownFilePath)) {
+                markdownFilePath = `${cleanPath}/${baseFileName}_v${version}${extension}`;
+                version++;
+            }
+
+            const response = await octokit.rest.repos.createOrUpdateFileContents({
+                owner: req.user.profile.username,
+                repo: repository,
+                path: markdownFilePath,
+                message: `Upload file ${file.originalname}`,
+                content: Buffer.from(markdownContent).toString('base64')
+            });
+
+            results.push(response.data);
+
+            // Increment the progress after processing each file and send progress update
+            processedFiles++;
+            const progress = (processedFiles / req.files.length) * 100;
+            console.log(`Processed Files: ${processedFiles}, Progress: ${progress}%`); // Debug log
+            wss.clients.forEach(client => {
+                if (client.readyState === 1){
+                    console.log(`Sending progress to client ${client.userId}: ${progress}%`);
+                    client.send(JSON.stringify({ progress }));
+                }
+            });
+
+            // Ensure the message is sent before processing the next file
+            await new Promise(resolve => setTimeout(resolve, 0));
         }
 
-        const response = await octokit.rest.repos.createOrUpdateFileContents({
-          owner: req.user.profile.username,
-          repo: repository,
-          path: markdownFilePath,
-          message: `Upload file ${file.originalname}`,
-          content: Buffer.from(markdownContent).toString("base64"),
+        res.json({
+            message: 'Files uploaded successfully!',
+            data: results
         });
-
-        results.push(response.data);
-
-        processedFiles++;
-        sendProgressUpdate(processedFiles, req.files.length);
-
-        await new Promise((resolve) => setTimeout(resolve, 0));
-      }
-
-      res.json({
-        message: "Files uploaded successfully!",
-        data: results,
-      });
     } catch (error) {
-      handleError(res, "Failed to upload files", error);
+        console.error('Failed to upload files:', error);
+        res.status(500).send('Failed to upload files');
     }
-  }
-);
+});
+
+// Helper function to check if a file exists in the repository
+async function fileExists(octokit, owner, repo, path) {
+    try {
+        await octokit.rest.repos.getContent({
+            owner,
+            repo,
+            path
+        });
+        return true;
+    } catch (error) {
+        if (error.status === 404) {
+            return false;
+        }
+        throw error;
+    }
+}
+
 
 export default router;

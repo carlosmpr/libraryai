@@ -74,15 +74,9 @@ const Popup = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: '100%' }}
                 transition={{ duration: 0.5 }}
-                className="absolute inset-0 flex items-center justify-center z-10 "
+                className="absolute inset-0  z-10 "
               >
-             {progress !== undefined && (
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                    <p className="bg-gray-800 text-white text-8xl px-3 py-1 rounded-md">
-                      {progress}%
-                    </p>
-                  </div>
-                )}
+            
                 
                 <div className="flex">
                   <span className="loading loading-dots loading-lg"></span>
@@ -90,6 +84,14 @@ const Popup = ({
                   <span className="loading loading-dots loading-lg"></span>
                   <span className="loading loading-dots loading-lg"></span>
                 </div>
+
+                {progress !== undefined && (
+                  <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                    <p className="bg-gray-800 text-white text-8xl px-3 py-1 rounded-md">
+                      {progress}%
+                    </p>
+                  </div>
+                )}
               </motion.div>
             )}
           </AnimatePresence>

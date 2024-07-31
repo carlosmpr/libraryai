@@ -48,7 +48,7 @@ const MainLibrary = () => {
 
         <div className="flex flex-wrap justify-evenly gap-10 mt-10">
           <button
-            className="btn flex flex-col justify-center w-[250px] h-[290px] rounded-2xl btn-outline btn-primary"
+            className="btn flex flex-col justify-center w-[250px] h-[290px] rounded-2xl btn-outline btn-primary hidden lg:relative"
             onClick={() => setIsModalOpen(true)}
           >
             <PlusCircleIcon className="w-10" />

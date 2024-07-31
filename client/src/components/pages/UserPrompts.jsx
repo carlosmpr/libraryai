@@ -1,5 +1,3 @@
-
-
 import { useInstructions } from "../context/UserInstructions";
 import { useState } from "react";
 import {
@@ -95,31 +93,40 @@ const UserPrompts = () => {
     }
   };
 
-  if (userInstructions.length > 0) {
-    return (
-      <div className="flex bg-orange-100 h-screen">
-        <SideBar />
-        <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
-          <div className="py-6">
-            <Breadcrumbs />
-          </div>
-          <div className="h-[90%] overflow-y-scroll ">
-            {userInstructions.map((item) => (
-              <div key={item.id}>
-                <ListPrompts
-                  key={item.id}
-                  {...item}
-                  onDelete={handleDeleteInstruction}
-                />
-              </div>
-            ))}
-          </div>
+  return (
+    <div className="flex bg-orange-100 h-screen">
+      <SideBar />
+      <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
+        <div className="py-6">
+          <Breadcrumbs />
+        </div>
+        <div className="hidden lg:relative">
+          {userInstructions.length > 0 ? (
+            <div className="h-[90%] overflow-y-scroll hidden sm:relative">
+              {userInstructions.map((item) => (
+                <div key={item.id}>
+                  <ListPrompts
+                    key={item.id}
+                    {...item}
+                    onDelete={handleDeleteInstruction}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center items-center justify-center">
+              <p>No user Default Instructions</p>
+            </div>
+          )}
+        </div>
+        <div className="text-center items-center justify-center lg:hidden h-full">
+          <p className="text-xl">
+            Oh no this feature was intended to be use on your Laptop{" "}
+          </p>
         </div>
       </div>
-    );
-  } else {
-    return <div>No user default instructions</div>;
-  }
+    </div>
+  );
 };
 
 export default UserPrompts;

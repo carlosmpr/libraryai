@@ -30,7 +30,8 @@ const CustomizePrompt = () => {
   };
 
   return (
-    <div className="flex bg-orange-100 h-screen">
+    <>
+    <div className=" bg-orange-100 h-screen hidden lg:flex">
       <Popup
         popupId="loading_modal"
         isOpen={isModalOpen}
@@ -61,6 +62,12 @@ const CustomizePrompt = () => {
         {markdownContent && <MarkDownPreview selectedFileContent={markdownContent} />}
       </div>
     </div>
+    <div className="text-center flex items-center justify-center lg:hidden h-screen p-8 bg-orange-100">
+          <p className="text-xl">
+            Oh no this feature was intended to be use on your Laptop{" "}
+          </p>
+        </div>
+    </>
   );
 };
 

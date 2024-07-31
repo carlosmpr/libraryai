@@ -117,9 +117,9 @@ const UserPrompts = () => {
         <div className="py-6">
           <Breadcrumbs />
         </div>
-        <div className="hidden lg:relative">
+        <div className="hidden lg:block">
           {userInstructions.length > 0 ? (
-            <div className="h-[90%] overflow-y-scroll hidden sm:relative">
+            <div className="h-[90%] overflow-y-scroll ">
               {userInstructions.map((item) => (
                 <div key={item.id}>
                   <ListPrompts

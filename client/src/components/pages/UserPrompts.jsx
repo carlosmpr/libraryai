@@ -117,7 +117,7 @@ const UserPrompts = () => {
         <div className="py-6">
           <Breadcrumbs />
         </div>
-        <div className="hidden lg:block">
+        <div className="hidden lg:block h-full overflow-y-scroll">
           {userInstructions.length > 0 ? (
             <div className="h-[90%] overflow-y-scroll ">
               {userInstructions.map((item) => (

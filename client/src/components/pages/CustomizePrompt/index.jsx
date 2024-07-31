@@ -30,7 +30,7 @@ const CustomizePrompt = () => {
   };
 
   return (
-    <div className="flex bg-orange-50 h-screen">
+    <div className="flex bg-orange-100 h-screen">
       <Popup
         popupId="loading_modal"
         isOpen={isModalOpen}

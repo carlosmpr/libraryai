@@ -16,7 +16,7 @@ const LibraryDetailsContent = () => {
   const { repoName, selectedFileContent, loading } = useLibrary();
 
   return (
-    <div className="flex bg-orange-50 h-screen">
+    <div className="flex bg-orange-100 h-screen">
       <SideBar>
         <div>
           {loading ? (
@@ -29,13 +29,13 @@ const LibraryDetailsContent = () => {
           )}
         </div>
       </SideBar>
-      <div className="flex flex-col bg-orange-50 flex-1 h-screen overflow-y-scroll px-20">
+      <div className="flex flex-col bg-orange-50 flex-1 h-screen overflow-y-scroll p-4 sm:px-20">
         <Breadcrumbs />
         {selectedFileContent && (
           <MarkDownPreview selectedFileContent={selectedFileContent} />
         )}
       </div>
-      <div className="fixed w-full bottom-0">
+      <div className="fixed hidden sm:flex  w-full bottom-0">
         <div className="ml-[20%] flex w-full bg-base-100 p-4 mx-auto border-t-2 border-black gap-4">
           <CreateFolder />
 

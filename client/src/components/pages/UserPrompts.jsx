@@ -97,7 +97,7 @@ const UserPrompts = () => {
 
   if (userInstructions.length > 0) {
     return (
-      <div className="flex bg-orange-50 h-screen">
+      <div className="flex bg-orange-100 h-screen">
         <SideBar />
         <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
           <div className="py-6">

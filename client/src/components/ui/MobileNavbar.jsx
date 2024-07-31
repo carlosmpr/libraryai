@@ -9,7 +9,7 @@ const MobileNavbar = ({ navItems = [] }) => {
   const toggleMenu = () => setIsOpen((prevState) => !prevState);
 
   return (
-    <div className="sm:hidden">
+    <div className="sm:hidden ">
       <div
         className="rounded-full p-2 cursor-pointer bg-base-300 shadow-xl"
         onClick={toggleMenu}

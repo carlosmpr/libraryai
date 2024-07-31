@@ -1,6 +1,6 @@
 "use client";
 
-import InfiniteScrollAnimation from "../../../animations/InfiniteScrollAnimation";
+import InfiniteScrollAnimation from "../animations/InfiniteScrollAnimation";
 
 const companies = [
   "/programing/1.svg",
@@ -17,7 +17,7 @@ const companies = [
 
 const Marquee = () => {
   return (
-    <section className="w-full flex gap-5 justify-evenly bg-orange-50 max-md:flex-wrap p-10">
+    <section className="w-full flex gap-5 justify-evenly bg-orange-100 max-md:flex-wrap p-10">
       <InfiniteScrollAnimation>
         {companies.map((src, index) => (
           <img

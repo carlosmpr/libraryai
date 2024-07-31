@@ -41,7 +41,7 @@ const MainLibrary = () => {
   };
 
   return (
-    <div className="flex bg-orange-50 h-screen">
+    <div className="flex bg-orange-100 h-screen">
       <SideBar />
       <div className="p-10 w-full h-full overflow-y-scroll">
         <Heading title="Select your library" decoration="Libraries" />

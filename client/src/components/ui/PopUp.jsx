@@ -65,7 +65,7 @@ const Popup = ({
           <h2 className="font-bold text-3xl">{title}</h2>
           <p className="text-base-content/70 text-sm">{description}</p>
         </div>
-        <div className="relative h-full">
+        <div className="relative">
           <AnimatePresence>
             {isLoading && (
               <motion.div
@@ -74,9 +74,9 @@ const Popup = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: '100%' }}
                 transition={{ duration: 0.5 }}
-                className="absolute inset-0  z-10 "
+                className=" inset-0 flex flex-col items-center justify-center z-10 "
               >
-            
+           
                 
                 <div className="flex">
                   <span className="loading loading-dots loading-lg"></span>
@@ -86,8 +86,8 @@ const Popup = ({
                 </div>
 
                 {progress !== undefined && (
-                  <div className="absolute bottom-4 left-0 right-0 flex justify-center">
-                    <p className="bg-gray-800 text-white text-8xl px-3 py-1 rounded-md">
+                  <div className=" flex justify-center">
+                    <p className="bg-gray-800 text-white text-[150px] px-3 py-1 rounded-md">
                       {progress}%
                     </p>
                   </div>

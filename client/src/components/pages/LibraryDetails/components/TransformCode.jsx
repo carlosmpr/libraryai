@@ -71,11 +71,11 @@ const TransformCode = ({ selectedFileContent }) => {
 
   return (
     <>
-      <Modal buttonTitle={"Transform Code"} modalId={"transformCode"} customStyle="w-screen  h-screen  overflow-y-scroll px-10 pb-20">
+      <Modal buttonTitle={"Transform Code"} modalId={"transformCode"} customStyle="w-[95%]  h-[95%]  overflow-y-scroll px-10 pb-20">
        
-       <div className="w-full text-center mb-4">
+       <div className="w-full flex flex-col items-center justify-center text-center mb-4">
        <h2 className="text-5xl font-bold">Code Transformation</h2>
-          <p className="text-xs max-w-xl mx-atuo">
+          <p className="text-xs max-w-xl">
             This feature allows you to transform code into different formats or optimize it based on your selected instructions. 
             Please note that this is an experimental feature. Ensure to check and revise the transformed code before using it in production.
           </p>

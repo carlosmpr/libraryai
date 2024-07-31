@@ -13,7 +13,7 @@ function NavigationButton({
   return (
     <Link
       to={to}
-      className={`rounded-2xl flex items-center gap-2 hidden lg:relative`}
+      className={`rounded-2xl hidden lg:flex items-center gap-2 `}
     >
       {Icon && <Icon className="w-6 " />}
       <p className="text-sm">{title}</p>

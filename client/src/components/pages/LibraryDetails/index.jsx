@@ -29,7 +29,7 @@ const LibraryDetailsContent = () => {
           )}
         </div>
       </SideBar>
-      <div className="flex flex-col bg-orange-50 flex-1 h-screen overflow-y-scroll p-4 sm:px-20">
+      <div className="flex flex-col bg-orange-100 flex-1 h-screen overflow-y-scroll p-4 sm:px-20">
         <Breadcrumbs />
         {selectedFileContent && (
           <MarkDownPreview selectedFileContent={selectedFileContent} />

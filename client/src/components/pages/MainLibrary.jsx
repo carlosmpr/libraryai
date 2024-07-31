@@ -25,24 +25,40 @@ const MainLibrary = () => {
     onSubmit,
   } = useMainLibrary();
 
-
   const navigate = useNavigate();
 
   const handleClose = () => {
     setIsModalOpen(false);
-   
   };
 
   const handleSuccess = () => {
     console.log("handleSuccess called");
     console.log("New Repo Name:", newRepoName);
     setIsModalOpen(false);
-    navigate( `/library/library-${newRepoName}`);
+    navigate(`/library/library-${newRepoName}`);
   };
 
   return (
     <div className="flex bg-orange-100 h-screen">
-      <SideBar />
+      <SideBar>
+        <div className="w-full space-y-8">
+          <div>
+            <span className="font-semibold">Creating a Repository</span>
+            <p className="text-sm">
+              All repositories created with this application will start with
+              library- to make the search easier.
+            </p>
+          </div>
+          <div>
+            <span className="font-semibold">Delete or Modify</span>
+            <p className="text-sm">
+              The library does not modify or update any of your GitHub
+              repositories. To delete or modify a repository, you will need to
+              go to GitHub and make changes directly.
+            </p>
+          </div>
+        </div>
+      </SideBar>
       <div className="p-10 w-full h-full overflow-y-scroll">
         <Heading title="Select your library" decoration="Libraries" />
 

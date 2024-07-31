@@ -17,7 +17,7 @@ const Breadcrumbs = () => {
     <div className="breadcrumbs text-lg">
       <ul>
         <li>
-          <Link to="/">
+          <Link to="/library">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

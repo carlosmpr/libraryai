@@ -95,8 +95,25 @@ const UserPrompts = () => {
 
   return (
     <div className="flex bg-orange-100 h-screen">
-      <SideBar />
-      <div className="flex flex-col bg-orange-50 flex-1 h-screen px-20">
+      <SideBar >
+      <div className="w-full space-y-8">
+      <div>
+            <span className="font-semibold">Where is this saved?</span>
+            <p className="text-sm">
+              Your custom prompts or instructions are saved in a repository named library-username-config inside a JSON file.
+            </p>
+          </div>
+
+          <div>
+            <span className="font-semibold">Modifying Instructions</span>
+            <p className="text-sm">
+              While the app can modify the content of the JSON file, deletion of the file needs to be performed directly on GitHub.
+            </p>
+          </div>
+          </div>
+
+        </SideBar>
+      <div className="flex flex-col bg-orange-100 flex-1 h-screen px-20">
         <div className="py-6">
           <Breadcrumbs />
         </div>

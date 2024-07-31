@@ -8,17 +8,20 @@ import DefaultLayout from './components/pages/DefaultLayout';
 import FeaturesPage from './components/pages/FeaturesPage';
 import  AboutPage  from './components/pages/AboutPage';
 import PrivacyPage from './components/pages/PrivacyPage';
-
+import useLocalizedData from './components/hooks/useLocalizedData';
 
 function App() {
+  const { generalData, homePageData, aboutPageData, privacyPolicyPageData } = useLocalizedData();
+  console.log(generalData, homePageData)
+
   return (
     <Router>
       <Routes>
-        <Route element={<DefaultLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/features" element={<FeaturesPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/privacy" element={<PrivacyPage />} />
+        <Route element={<DefaultLayout generalData={generalData}/>}>
+          <Route path="/" element={<Home generalData={generalData} homePageData={homePageData} />} />
+          <Route path="/features" element={<FeaturesPage generalData={generalData}/>} />
+          <Route path="/about" element={<AboutPage aboutPageData={aboutPageData} generalData={generalData}/>} />
+          <Route path="/privacy" element={<PrivacyPage content={privacyPolicyPageData}/>} />
         </Route>
         <Route path="/library" element={<MainLibrary />} />
         <Route path="/library/:repoName" element={<LibraryDetails />} />

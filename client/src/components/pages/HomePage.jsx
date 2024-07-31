@@ -5,13 +5,13 @@ import SlidingRectangles from "../animations/MovingRectangles";
 import Hero from "../ui/Hero";
 import FadeInTransition from "../animations/FadeTransition";
 import ServiceItem from "../ui/ServiceItem";
-import { homePageData, generalData } from "../../data/PageData";
+
 import CenterHeading from "../ui/CenterHeading";
 
-function Home() {
+function Home({generalData, homePageData}) {
   const { mainSection, additionalSection } = homePageData;
   const { heroes, services, feature } = generalData;
-
+  console.log('this is my heroes', homePageData)
   return (
     <>
       <MainSection {...mainSection} />

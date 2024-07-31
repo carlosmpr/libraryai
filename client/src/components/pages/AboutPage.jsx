@@ -1,8 +1,8 @@
 import CenterHeading from "../ui/CenterHeading";
 import Feature from "../ui/Feature";
 import Hero from "../ui/Hero";
-import { generalData, aboutPageData } from "../../data/PageData";
-const AboutPage = () => {
+
+const AboutPage = ({aboutPageData, generalData}) => {
   const { featureTitle, featureDescription, heroSections } = aboutPageData;
   return (
     <Feature title={featureTitle} description={featureDescription}>

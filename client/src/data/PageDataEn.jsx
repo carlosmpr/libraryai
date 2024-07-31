@@ -174,5 +174,37 @@ export const homePageData = {
   };
   
   
-  
+  export const privacyPolicyPageData = {
+    title: "Privacy Policy",
+    description: "At Code Library, we take your privacy seriously. This policy outlines what information we collect and how we use it.",
+    sections: [
+      {
+        title: "No User Data Collection",
+        content: "We do not collect any user data. This includes but is not limited to your personal information, login credentials, code, or any other data."
+      },
+      {
+        title: "GitHub Login",
+        content: "We request your GitHub login solely to manage and create public repositories on your behalf. We do not access any of your private repositories or organization repositories. Additionally, we do not perform any actions to delete repositories."
+      },
+      {
+        title: "Public Repository Management",
+        content: "Our application only interacts with public repositories. This ensures that your private code remains secure and inaccessible to our platform."
+      },
+      {
+        title: "No Logging of Information",
+        content: "We do not log any information related to your login or code. Our system is designed to operate without storing or tracking your data."
+      },
+      {
+        title: "Security",
+        content: "We are committed to ensuring that your information is secure. Although we do not collect or store your data, we use secure methods to interact with GitHub, ensuring that your login credentials and repositories are managed safely."
+      },
+      {
+        title: "Changes to this Policy",
+        content: "We may update this privacy policy from time to time. Any changes will be posted on this page, and we encourage you to review our policy periodically."
+      },
+      {
+        content: "By using Code Library, you agree to this privacy policy. If you have any questions or concerns, please contact us."
+      }
+    ]
+  };
   

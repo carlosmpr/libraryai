@@ -225,7 +225,6 @@ router.post(
         data: results,
       });
     } catch (error) {
-      console.error("Error uploading files:", error);
       handleError(res, "Failed to upload files", error);
     }
   }

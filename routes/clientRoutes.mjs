@@ -9,40 +9,24 @@ const router = express.Router();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Render the HTML file from the dist directory
-router.get("/", (req, res) => {
+// Middleware to send index.html for all routes
+const sendIndexHtml = (req, res) => {
   res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
+};
 
-router.get("/features", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
+// Routes that do not require authentication
+router.get("/", sendIndexHtml);
+router.get("/features", sendIndexHtml);
+router.get("/about", sendIndexHtml);
+router.get("/privacy", sendIndexHtml);
 
+// Middleware to ensure authentication for routes that require it
+router.use(ensureAuthenticated);
 
-router.get("/about", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-
-
-router.get("/privacy", (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-// Ensure authenticated for /library
-router.get("/library", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-
-// Route to serve library details page
-router.get("/library/:repoName", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-
-router.get("/customizeprompt", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
-
-router.get("/userPrompts", ensureAuthenticated, (req, res) => {
-  res.sendFile(path.join(__dirname, "..", "dist", "index.html"));
-});
+// Routes that require authentication
+router.get("/library", sendIndexHtml);
+router.get("/library/:repoName", sendIndexHtml);
+router.get("/customizeprompt", sendIndexHtml);
+router.get("/userPrompts", sendIndexHtml);
 
 export default router;

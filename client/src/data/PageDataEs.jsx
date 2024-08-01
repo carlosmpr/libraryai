@@ -197,3 +197,37 @@ export const privacyPolicyPageData = {
       }
     ]
   };
+
+
+  export const  mainLibraryPageData  = {
+    sidebar: {
+      creatingRepositoryTitle: "Crear una nueva Biblioteca",
+      creatingRepositoryDescription:
+        "Todos los repositorios creados con esta aplicación comenzarán con library- para facilitar la búsqueda.",
+      deleteModifyTitle: "Eliminar o Modificar",
+      deleteModifyDescription:
+        "La biblioteca no modifica ni actualiza ninguno de tus repositorios de GitHub. Para eliminar o modificar un repositorio, deberás ir a GitHub y hacer los cambios directamente.",
+    },
+    heading: {
+      title: "Selecciona tu biblioteca",
+      decoration: "Bibliotecas",
+    },
+    popup: {
+      createLibrary: "Crear Nueva Biblioteca",
+      title: "Crear Una Nueva Biblioteca",
+      description: "Introduce el nombre y la descripción de la nueva biblioteca.",
+      successMessage: "¡Biblioteca creada con éxito!",
+      errorMessage: "Error al crear la biblioteca.",
+    },
+    form: {
+      libraryNamePlaceholder: "Nombre de la Biblioteca",
+      libraryDescriptionPlaceholder: "Descripción de la Biblioteca",
+      creatingText: "Creando...",
+      createLibraryButton: "Crear Biblioteca",
+    },
+    button: {
+      createNewLibrary: "Crear Nueva Biblioteca",
+    },
+    noDescription: "No se proporcionó descripción",
+  };
+  

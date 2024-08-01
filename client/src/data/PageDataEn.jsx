@@ -208,3 +208,38 @@ export const homePageData = {
     ]
   };
   
+
+  export const mainLibraryPageData = {
+    sidebar: {
+      creatingRepositoryTitle: "Creating a Repository",
+      creatingRepositoryDescription:
+        "All repositories created with this application will start with library- to make the search easier.",
+      deleteModifyTitle: "Delete or Modify",
+      deleteModifyDescription:
+        "The library does not modify or update any of your GitHub repositories. To delete or modify a repository, you will need to go to GitHub and make changes directly.",
+    },
+    heading: {
+      title: "Select your library",
+      decoration: "Libraries",
+    },
+    popup: {
+      createLibrary: "Create New Library",
+      popupId: "create_library_modal",
+      title: "Create A New Library",
+      description: "Enter the name and description of the new library.",
+      successMessage: "Library created successfully!",
+      errorMessage: "Failed to create library.",
+    },
+    form: {
+      libraryNamePlaceholder: "Library Name",
+      libraryDescriptionPlaceholder: "Library Description",
+      creatingText: "Creating...",
+      createLibraryButton: "Create Library",
+    },
+    button: {
+      createNewLibrary: "Create New Library",
+    },
+    noDescription: "No description provided",
+  };
+  
+ 

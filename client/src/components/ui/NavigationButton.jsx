@@ -13,7 +13,7 @@ function NavigationButton({
   return (
     <Link
       to={to}
-      className={`rounded-2xl hidden lg:flex items-center gap-2 `}
+      className={`rounded-2xl hidden lg:flex items-center gap-2  relative z-30`}
     >
       {Icon && <Icon className="w-6 " />}
       <p className="text-sm">{title}</p>
@@ -41,7 +41,7 @@ export default function PromptNavigations() {
   };
 
   return (
-    <div className="flex flex-col gap-4 mt-auto relative z-30 ">
+    <div className="flex flex-col gap-4 mt-auto  ">
       <NavigationButton
         to="/userPrompts"
         icon={AdjustmentsHorizontalIcon}

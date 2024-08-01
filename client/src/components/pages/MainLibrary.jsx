@@ -6,9 +6,8 @@ import FadeInTransition from "../animations/FadeTransition";
 import Popup from "../ui/PopUp";
 import { useMainLibrary } from "../context/MainLibraryContext";
 import SideBar from "../ui/SideBar";
-
 import { useNavigate } from "react-router-dom";
-
+import { useLocalization } from "../context/LocalizationContext";
 const MainLibrary = () => {
   const {
     repositories,
@@ -24,6 +23,7 @@ const MainLibrary = () => {
     setNewRepoDescription,
     onSubmit,
   } = useMainLibrary();
+  const { mainLibraryPageData } = useLocalization();
 
   const navigate = useNavigate();
 
@@ -32,35 +32,29 @@ const MainLibrary = () => {
   };
 
   const handleSuccess = () => {
-    console.log("handleSuccess called");
-    console.log("New Repo Name:", newRepoName);
     setIsModalOpen(false);
     navigate(`/library/library-${newRepoName}`);
   };
 
+  const { sidebar, heading, popup, form } = mainLibraryPageData;
   return (
     <div className="flex bg-orange-100 h-screen">
       <SideBar>
         <div className="w-full space-y-8">
           <div>
-            <span className="font-semibold">Creating a Repository</span>
-            <p className="text-sm">
-              All repositories created with this application will start with
-              library- to make the search easier.
-            </p>
+            <span className="font-semibold">
+              {sidebar.creatingRepositoryTitle}
+            </span>
+            <p className="text-sm">{sidebar.creatingRepositoryDescription}</p>
           </div>
           <div>
-            <span className="font-semibold">Delete or Modify</span>
-            <p className="text-sm">
-              The library does not modify or update any of your GitHub
-              repositories. To delete or modify a repository, you will need to
-              go to GitHub and make changes directly.
-            </p>
+            <span className="font-semibold">{sidebar.deleteModifyTitle}</span>
+            <p className="text-sm">{sidebar.deleteModifyDescription}</p>
           </div>
         </div>
       </SideBar>
       <div className="p-10 w-full h-full overflow-y-scroll">
-        <Heading title="Select your library" decoration="Libraries" />
+        <Heading title={heading.title} decoration={heading.decoration} />
 
         <div className="flex flex-wrap justify-evenly gap-10 mt-10">
           <button
@@ -68,20 +62,20 @@ const MainLibrary = () => {
             onClick={() => setIsModalOpen(true)}
           >
             <PlusCircleIcon className="w-10" />
-            <span>Create New Library</span>
+            <span>{popup.createLibrary}</span>
           </button>
 
           <Popup
             popupId="create_library_modal"
             isOpen={isModalOpen}
             onClose={handleClose}
-            title="Create A New Library"
-            description="Enter the name and description of the new library."
+            title={popup.title}
+            description={popup.description}
             isLoading={isLoading}
             isSuccess={isSuccess}
             isError={isError}
-            successMessage="Library created successfully!"
-            errorMessage="Failed to create library."
+            successMessage={popup.successMessage}
+            errorMessage={popup.errorMessage}
             customStyle="w-[500px] p-5 rounded-2xl"
             onSuccess={handleSuccess} // Use the handleSuccess function
           >
@@ -90,14 +84,14 @@ const MainLibrary = () => {
                 type="text"
                 value={newRepoName}
                 onChange={(e) => setNewRepoName(e.target.value)}
-                placeholder="Library Name"
+                placeholder={form.libraryNamePlaceholder}
                 required
                 className="input w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
               />
               <textarea
                 value={newRepoDescription}
                 onChange={(e) => setNewRepoDescription(e.target.value)}
-                placeholder="Library Description"
+                placeholder={form.libraryDescriptionPlaceholder}
                 required
                 className="textarea w-full border-b-4 border-black shadow-2xl focus:ring-0 focus:border-black focus:border-b-4"
               />
@@ -106,7 +100,7 @@ const MainLibrary = () => {
                 disabled={isLoading}
                 className="btn btn-primary"
               >
-                {isLoading ? "Creating..." : "Create Library"}
+                 {form.createLibraryButton}
               </button>
             </form>
           </Popup>

@@ -1,7 +1,8 @@
 
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
-
+import { useLocalization } from "../../../context/LocalizationContext";
 const CodeDownload = ({ selectedFileContent }) => {
+  const {isSpanish} = useLocalization()
   const extractCodeBlocks = (markdownContent) => {
     const titleMatch = markdownContent.match(/title:\s*'([^']+)'/);
     const title = titleMatch ? titleMatch[1] : "code";
@@ -54,7 +55,7 @@ const CodeDownload = ({ selectedFileContent }) => {
         onClick={handleDownloadCodeFiles}
       >
         <DocumentTextIcon className="w-8" />
-        <span>Download Code</span>
+        <span>{isSpanish ? "Descargar Codigo":"Download Code"}</span>
       </a>
     </>
   );

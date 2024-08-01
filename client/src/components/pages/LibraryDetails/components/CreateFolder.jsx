@@ -1,15 +1,37 @@
-
 import { useState } from "react";
 import { FolderPlusIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useLibrary } from "../context/LibraryContext";
-import DirStructureOptions from './DirStructureOptions';
+import DirStructureOptions from "./DirStructureOptions";
 import Popup from "../../../ui/PopUp";
+import { useLocalization } from "../../../context/LocalizationContext";
+
+const englishText = {
+  addStructure: "Add Structure",
+  addNewFolder: "Add New Folder",
+  selectStructure: "Select a folder structure to add.",
+  creating: "Creating...",
+  createFolder: "Create Folder",
+  successMessage: "Folder created successfully!",
+  errorMessage: "Failed to create folder.",
+};
+
+const spanishText = {
+  addStructure: "Agregar Estructura",
+  addNewFolder: "Agregar Nueva Carpeta",
+  selectStructure: "Seleccione una estructura de carpeta para agregar.",
+  creating: "Creando...",
+  createFolder: "Crear Carpeta",
+  successMessage: "¡Carpeta creada con éxito!",
+  errorMessage: "Error al crear la carpeta.",
+};
 
 const CreateFolder = () => {
   const { repoName, loadContents } = useLibrary();
   const { isModalOpen, setIsModalOpen, isLoading, isSuccess, isError, handleLoading } = useLoadingIndicator();
   const [selectedStructure, setSelectedStructure] = useState(null);
+  const { isSpanish } = useLocalization();
+  const text = isSpanish ? spanishText : englishText;
 
   const handleCreateFolder = async () => {
     const response = await fetch("/api/create-folder", {
@@ -25,8 +47,7 @@ const CreateFolder = () => {
     });
 
     if (response.ok) {
-     console.log(response)
-      
+      console.log(response);
     } else {
       console.error("Failed to create folder");
       throw new Error("Failed to create folder");
@@ -55,30 +76,30 @@ const CreateFolder = () => {
         onClick={() => setIsModalOpen(true)}
       >
         <FolderPlusIcon className="w-8" />
-        Add Structure
+        {text.addStructure}
       </button>
       <Popup
         popupId="create_folder_modal"
-        title="Add New Folder"
-        description="Select a folder structure to add."
+        title={text.addNewFolder}
+        description={text.selectStructure}
         isOpen={isModalOpen}
         onClose={handleClose}
         isLoading={isLoading}
         isSuccess={isSuccess}
         isError={isError}
-        successMessage="Folder created successfully!"
-        errorMessage="Failed to create folder."
+        successMessage={text.successMessage}
+        errorMessage={text.errorMessage}
         onSuccess={loadContents}
         customStyle="w-[500px] p-5 rounded-2xl"
       >
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4 ">
           <DirStructureOptions onSelect={handleStructureSelect} selectedStructure={selectedStructure} />
           <button
             type="submit"
             disabled={isLoading || !selectedStructure}
             className="btn btn-primary mt-4"
           >
-            {isLoading ? "Creating..." : "Create Folder"}
+            {isLoading ? text.creating : text.createFolder}
           </button>
         </form>
       </Popup>

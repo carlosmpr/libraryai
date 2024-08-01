@@ -1,6 +1,8 @@
 
 import  { createContext, useContext, useState, useEffect } from 'react';
-const welcomeMessage = `
+import { useLocalization } from '../../../context/LocalizationContext';
+// messages.js
+export const welcomeMessageEn = `
 # 🎉 Hello Developer! Welcome to Code Library Beta 🎉
 
 ## What is Code Library?
@@ -48,13 +50,66 @@ We're constantly working to enhance Code Library. Here’s what you can look for
 - **Provide Feedback**: Help us improve by providing feedback on your experience and any issues you encounter.
 
 Welcome aboard, and happy coding! 🚀
-`
+`;
+
+export const welcomeMessageEs = `
+# 🎉 ¡Hola Desarrollador! Bienvenido a Code Library Beta 🎉
+
+## ¿Qué es Code Library?
+Code Library es tu solución ideal para construir y documentar tus proyectos de código sin esfuerzo. Nuestra plataforma está diseñada para simplificar tu flujo de trabajo con características como:
+
+- **Arrastrar y Soltar Simple**: Sube hasta 4 documentos a la vez con un rápido arrastrar y soltar.
+- **Características Futuras**: Pronto, podrás pasar todo tu proyecto para una documentación completa.
+
+## ¿Cómo Empezar?
+
+### Paso 1: Crea tu Primera Estructura
+Para comenzar, necesitas crear una estructura para tu proyecto:
+
+- **Estructura Predeterminada**: Comienza con una estructura predeterminada que organiza tu código en un formato estándar.
+- **Estructura Personalizada Durante la Carga**: También puedes crear una estructura personalizada cuando subas tus archivos. Esto te ayuda a decidir exactamente dónde y cómo se almacenará tu código.
+
+### Paso 2: Sube tus Archivos
+Una vez que tu estructura esté configurada, sigue estos pasos:
+
+- **Sube Archivos**: Arrastra y suelta los archivos que deseas documentar en el área designada.
+- **Documentación Automática**: Después de que los archivos se suban, selecciónalos para iniciar el proceso de documentación. Nuestra potente IA generará documentación completa para tu código.
+
+## Otras Funcionalidades
+
+### Opciones de Descarga
+- **Descarga de Archivo Único**: Descarga fácilmente cualquier archivo único de tu proyecto.
+- **Descarga Completa de Directorio**: Con solo un clic, descarga un directorio completo que contiene los archivos de tu proyecto y la documentación.
+- **Descarga de Código Personalizado**: Obtén el código generado junto con la documentación.
+
+### Personalizando tu Experiencia
+Para aprovechar al máximo Code Library, puedes adaptar el proceso a tus necesidades:
+
+- **Crea Prompts Personalizados**: Personaliza o crea tus propios prompts para guiar el proceso de documentación de la IA. Sigue las instrucciones proporcionadas para configurar y modificar tus prompts tanto antes como después de convertir tus documentos.
+
+## Próximas Características
+Estamos trabajando constantemente para mejorar Code Library. Esto es lo que puedes esperar:
+
+- **Documentación por Lotes del Proyecto**: Pronto, podrás pasar todo tu proyecto de una vez para procesamiento y documentación por lotes.
+- **Características Avanzadas de IA**: Capacidades de IA mejoradas para una documentación aún más detallada y precisa.
+- **Opciones de Personalización Mejoradas**: Más formas de personalizar el aspecto, la sensación y la estructura de tu documentación.
+
+## Consejos para Usar Code Library
+- **Organiza tus Archivos**: Antes de subirlos, asegúrate de que tus archivos estén bien organizados para hacer el proceso de documentación más fluido.
+- **Revisa la Documentación Generada**: Siempre revisa la documentación generada por la IA para verificar su precisión y completitud.
+- **Proporciona Retroalimentación**: Ayúdanos a mejorar proporcionando retroalimentación sobre tu experiencia y cualquier problema que encuentres.
+
+¡Bienvenido a bordo y feliz codificación! 🚀
+`;
 
 const LibraryContext = createContext();
 
 export const useLibrary = () => useContext(LibraryContext);
 
 export const LibraryProvider = ({ children, repoName }) => {
+  const { isSpanish } = useLocalization();
+  const welcomeMessage = isSpanish ? welcomeMessageEs : welcomeMessageEn;
+
   const [contents, setContents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedFileContent, setSelectedFileContent] = useState(welcomeMessage);

@@ -23,7 +23,7 @@ const SideBar = ({ children }) => {
 
       {/* Sidebar */}
       <div
-        className={`fixed lg:relative p-4 w-[90%] lg:w-[20%] h-full bg-base-100 border-r-2 border-black shadow-2xl overflow-y-scroll flex flex-col transform transition-transform ${
+        className={`fixed lg:relative p-4 w-[90%] lg:w-[20%] h-full bg-base-100 border-r-2 border-black shadow-2xl overflow-y-scroll flex flex-col transform transition-transform z-50 ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >

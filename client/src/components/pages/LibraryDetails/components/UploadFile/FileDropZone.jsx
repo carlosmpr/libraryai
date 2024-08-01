@@ -1,7 +1,22 @@
-
 import { DocumentTextIcon, ArrowUpTrayIcon } from "@heroicons/react/24/outline";
+import { useLocalization } from "../../../../context/LocalizationContext";
+
+const englishText = {
+  invalidFileType: "Invalid file type. Only the allowed file types are permitted.",
+  maxFiles: (max) => `You can only upload a maximum of ${max} files.`,
+  dragDrop: "Drag & drop files or folders here, or click to select files",
+};
+
+const spanishText = {
+  invalidFileType: "Tipo de archivo no válido. Solo se permiten los tipos de archivos permitidos.",
+  maxFiles: (max) => `Solo puede subir un máximo de ${max} archivos.`,
+  dragDrop: "Arrastre y suelte archivos o carpetas aquí, o haga clic para seleccionar archivos",
+};
 
 const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
+  const { isSpanish } = useLocalization();
+  const text = isSpanish ? spanishText : englishText;
+
   const allowedExtensions = [
     ".js", ".jsx", ".ts", ".tsx", ".py", ".java", ".rb", ".php",
     ".html", ".css", ".cpp", ".c", ".go", ".rs", ".swift", ".kt", 
@@ -28,7 +43,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         if (isValidFile(file)) {
           filesArray.push(file);
         } else {
-          setError("Invalid file type. Only .js, .jsx, and .tsx files are allowed.");
+          setError(text.invalidFileType);
         }
       } else if (entry.isDirectory) {
         await traverseFileTree(entry, filesArray);
@@ -68,7 +83,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
   const validateAndSetFiles = (files) => {
     const filteredFiles = files.filter(isValidFile);
     if (filteredFiles.length + selectedFiles.length > maxFiles) {
-      setError(`You can only upload a maximum of ${maxFiles} files.`);
+      setError(text.maxFiles(maxFiles));
     } else {
       setSelectedFiles((prev) => [...prev, ...filteredFiles].slice(0, maxFiles));
       setError("");
@@ -79,7 +94,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="p-4 border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer mb-4 h-[400px]  w-[400px] flex overflow-y-scroll items-center justify-center"
+      className="p-4 border-2 border-dashed border-gray-300 rounded-md text-center cursor-pointer mb-4 h-[400px] w-[400px] flex overflow-y-scroll items-center justify-center"
     >
       <input
         type="file"
@@ -89,9 +104,9 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         id="fileUpload"
         multiple
       />
-      <label htmlFor="fileUpload" className="cursor-pointer ">
+      <label htmlFor="fileUpload" className="cursor-pointer">
         {selectedFiles.length > 0 ? (
-          <div className="flex flex-wrap gap-10  ">
+          <div className="flex flex-wrap gap-10">
             {selectedFiles.map((file) => (
               <div key={file.name}>
                 <DocumentTextIcon className="mx-auto w-8" />
@@ -102,7 +117,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         ) : (
           <div>
             <ArrowUpTrayIcon className="mx-auto w-8" />
-            <p>Drag & drop files or folders here, or click to select files</p>
+            <p>{text.dragDrop}</p>
           </div>
         )}
       </label>

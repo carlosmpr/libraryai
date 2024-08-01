@@ -7,6 +7,23 @@ import { useLibrary } from "../../context/LibraryContext";
 import { useInstructions } from "../../../../context/UserInstructions";
 import { useMainLibrary } from "../../../../context/MainLibraryContext";
 import Popup from "../../../../ui/PopUp";
+import { useLocalization } from "../../../../context/LocalizationContext";
+
+const englishText = {
+  addNewFile: "Add New File",
+  uploadNewFile: "Upload New File",
+  selectFile: "Select a file to upload to the repository.",
+  successMessage: "File uploaded successfully!",
+  errorMessage: "Failed to upload file.",
+};
+
+const spanishText = {
+  addNewFile: "Subir Documentos",
+  uploadNewFile: "Subir Nuevo Archivo",
+  selectFile: "Seleccione un archivo para subir al repositorio.",
+  successMessage: "¡Archivo subido con éxito!",
+  errorMessage: "Error al subir el archivo.",
+};
 
 const UploadFile = () => {
   const { repoName, loadContents, uploadPath, setUploadPath } = useLibrary();
@@ -16,8 +33,10 @@ const UploadFile = () => {
   const [error, setError] = useState("");
   const [selectedInstruction, setSelectedInstruction] = useState("");
   const { userInstructions } = useInstructions();
-  const { userProfile } = useMainLibrary(); // Get userProfile from MainLibraryContext
+  const { userProfile } = useMainLibrary();
   const [progress, setProgress] = useState(0);
+  const { isSpanish } = useLocalization();
+  const text = isSpanish ? spanishText : englishText;
 
   useEffect(() => {
     setUploadPath(newDirectory ? "" : uploadPath);
@@ -26,12 +45,10 @@ const UploadFile = () => {
   useEffect(() => {
     let ws;
     if (isModalOpen && userProfile?.id) {
-      // Determine the WebSocket URL based on the environment
-      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
       const wsHost = window.location.host;
       const wsUrl = `${wsProtocol}//${wsHost}`;
 
-      // Initialize WebSocket with dynamic URL
       ws = new WebSocket(wsUrl, userProfile.id);
       console.log("User ID:", userProfile.id);
 
@@ -72,7 +89,7 @@ const UploadFile = () => {
     formData.append("path", uploadPath || newDirectory);
 
     if (selectedInstruction) {
-      const instruction = userInstructions.find(inst => inst.id === selectedInstruction);
+      const instruction = userInstructions.find((inst) => inst.id === selectedInstruction);
       formData.append("instructionName", instruction.name);
       formData.append("model", instruction.model);
       formData.append("instructions", instruction.instructions);
@@ -89,7 +106,7 @@ const UploadFile = () => {
     }
 
     const result = await response.json();
-    console.log("File upload response:", result); // Log the result from the server
+    console.log("File upload response:", result);
   }, [selectedFiles, uploadPath, newDirectory, repoName, selectedInstruction, userInstructions]);
 
   const handleSubmit = useCallback((e) => {
@@ -112,29 +129,27 @@ const UploadFile = () => {
     setError("");
   }, []);
 
-  console.log(progress)
+  console.log(progress);
+
   return (
     <>
-      <button
-        className="btn btn-outline btn-secondary rounded-2xl"
-        onClick={() => setIsModalOpen(true)}
-      >
+      <button className="btn btn-outline btn-secondary rounded-2xl" onClick={() => setIsModalOpen(true)}>
         <ArrowUpTrayIcon className="w-8" />
-        Add new File
+        {text.addNewFile}
       </button>
       <Popup
         popupId="upload_file_modal"
-        title="Upload New File"
-        description="Select a file to upload to the repository."
+        title={text.uploadNewFile}
+        description={text.selectFile}
         isOpen={isModalOpen}
         onClose={handleModalClose}
         isLoading={isLoading}
         isSuccess={isSuccess}
         isError={isError}
-        successMessage="File uploaded successfully!"
-        errorMessage="Failed to upload file."
+        successMessage={text.successMessage}
+        errorMessage={text.errorMessage}
         onSuccess={loadContents}
-        customStyle="w-[1050px] h-[90%] p-10 rounded-2xl"
+        customStyle="w-[1050px] h-[90%] p-10 rounded-2xl overflow-y-scroll"
         progress={progress}
       >
         <UploadForm
@@ -151,10 +166,9 @@ const UploadFile = () => {
           setSelectedInstruction={setSelectedInstruction}
           dirView={<DirView />}
         />
-       
       </Popup>
     </>
   );
-}
+};
 
 export default UploadFile;

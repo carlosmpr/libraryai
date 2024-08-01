@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import useLoadingIndicator from "../../../hooks/useLoadingIndicator";
 import { useInstructions } from "../../../context/UserInstructions";
+import { useLocalization } from "../../../context/LocalizationContext";
 
-const initialModel = `
+const initialModelEn = `
 # 🛠️ How to Create Your Custom Prompts and Instructions 🛠️
 
 ## Introduction
@@ -87,12 +88,114 @@ By following these guidelines, you can create effective custom prompts and instr
 Happy Documenting! 📄✨
 `;
 
+const initialModelEs = `
+# 🛠️ Cómo Crear tus Prompts e Instrucciones Personalizados 🛠️
+
+## Introducción
+Crear prompts e instrucciones personalizados te permite adaptar el proceso de documentación a tus necesidades específicas. Sigue los pasos a continuación para estructurar tu archivo y asegurarte de que toda la información necesaria esté incluida.
+
+## Estructura del Archivo
+Al crear tus prompts e instrucciones personalizados, considera los siguientes componentes:
+
+### 1. Resumen
+Proporciona una breve descripción de lo que hace el código. Esto debe incluir el propósito principal y las funcionalidades clave.
+
+### 2. Dependencias
+Enumera todas las dependencias necesarias para que el código funcione. Incluye números de versión e instrucciones de instalación.
+
+### 3. Ejemplos
+Incluye fragmentos de código de ejemplo que demuestren cómo usar el código. Esto ayuda a los usuarios a comprender la aplicación práctica.
+
+### 4. Cómo Funciona el Código
+Explica la lógica y el flujo del código. Detalla las funciones, clases y métodos importantes para dar una comprensión clara del funcionamiento interno.
+
+### 5. Instrucciones Personalizadas
+Puedes personalizar las instrucciones en varios idiomas como chino, francés o español. Especifica tu idioma deseado y proporciona contenido traducido si es necesario.
+
+### 6. Selección de Modelo
+Para generar documentación, puedes usar el modelo GPT-3.5-Turbo. Asegúrate de proporcionar instrucciones detalladas para el modelo, incluyendo:
+
+- **Formato de Salida Deseado**: Especifica que la salida debe estar en formato markdown.
+- **Enfoque del Contenido**: Instruye a la IA a ignorar cualquier contenido no relacionado con el código.
+- **Prueba de Instrucciones**: Prueba diferentes combinaciones de instrucciones y configuraciones de modelo para encontrar lo que mejor se adapte a tus necesidades.
+
+## Creando Prompts Personalizados
+Sigue estos pasos para crear y probar tus prompts personalizados:
+
+1. **Define tus Requisitos**: Define claramente lo que necesitas de la IA. Sé específico sobre la estructura y el contenido.
+2. **Configura las Instrucciones**: Escribe instrucciones detalladas para que la IA las siga. Asegúrate de claridad y precisión en tus instrucciones.
+3. **Prueba y Ajusta**: Realiza pruebas con diferentes instrucciones y configuraciones de modelo. Ajusta según la calidad y relevancia de la salida.
+4. **Finaliza los Prompts**: Una vez satisfecho con los resultados, finaliza tus prompts y guárdalos para uso futuro.
+
+## Ejemplo de Prompts Personalizados
+Aquí tienes un ejemplo de cómo estructurar tu archivo de prompts personalizados:
+
+\`\`\`markdown
+# Resumen
+Este código está diseñado para extraer datos de sitios web y almacenarlos en una base de datos.
+
+# Dependencias
+- Python 3.8+
+- Biblioteca Requests (v2.25.1)
+- BeautifulSoup (v4.9.3)
+
+# Ejemplos
+\`\`\`python
+import requests
+from bs4 import BeautifulSoup
+
+def scrape_website(url):
+    response = requests.get(url)
+    soup = BeautifulSoup(response.content, 'html.parser')
+    return soup.title.text
+
+print(scrape_website('https://example.com'))
+\`\`\`
+
+# Cómo Funciona el Código
+El código usa la biblioteca Requests para obtener el contenido del sitio web y BeautifulSoup para analizar el HTML. Extrae e imprime el título de la página web.
+
+# Instrucciones Personalizadas
+Por favor, proporciona la documentación en francés.
+
+# Selección de Modelo
+Usa GPT-3.5-Turbo para generar la documentación en markdown. Asegúrate de que el contenido esté enfocado en el código.
+\`\`\`
+
+## Consejos para Prompts Personalizados Efectivos
+- **Sé Específico**: Cuanto más detalladas y específicas sean tus instrucciones, mejor podrá la IA generar documentación precisa.
+- **Usa un Lenguaje Claro**: Evita la ambigüedad en tus prompts para prevenir malinterpretaciones por parte de la IA.
+- **Revisa y Ajusta**: Revisa continuamente la salida y refina tus prompts para obtener mejores resultados.
+
+Siguiendo estas pautas, podrás crear prompts e instrucciones personalizados efectivos para mejorar tu proceso de documentación con Code Library.
+
+¡Feliz Documentación! 📄✨
+`;
+
+const promptExamplesEn = [
+  "Write a detailed step by step of the code",
+  "Write the Md File in Spanish",
+  "Write 5 examples of using this component",
+  "Write the Code with Typescript and explain the new addition",
+];
+
+const promptExamplesEs = [
+  "Escribe un paso a paso detallado del código",
+  "Escribe el archivo Md en español",
+  "Escribe 5 ejemplos de uso de este componente",
+  "Escribe el código con Typescript y explica la nueva adición",
+];
+
 const usePromptForm = () => {
   const { repoName } = useParams();
   const { userInstructions, setUserInstructions } = useInstructions();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen,setIsError  } = useLoadingIndicator();
+  const { isLoading, isSuccess, isError, handleLoading, isModalOpen, setIsModalOpen, setIsError } = useLoadingIndicator();
+  const { isSpanish } = useLocalization();
+  const initialModel = isSpanish ? initialModelEs : initialModelEn;
+  const promptExamples = isSpanish ? promptExamplesEs : promptExamplesEn;
+
   const [formState, setFormState] = useState({
     selectedFile: null,
     selectedExample: "",
@@ -119,13 +222,6 @@ const usePromptForm = () => {
     }
   }, [instructionId, userInstructions]);
 
-  const promptExamples = [
-    "Write a detailed step by step of the code",
-    "Write the Md File in Spanish",
-    "Write 5 examples of using this component",
-    "Write the Code with Typescript and explain the new addition",
-  ];
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
@@ -147,12 +243,10 @@ const usePromptForm = () => {
     setCurrentAction("runTest");
     setIsModalOpen(true);
 
-
     const { selectedFile, selectedModel, selectedExample } = formState;
 
     if (!selectedFile || !selectedModel || !selectedExample) {
-     
-      setIsError(true)
+      setIsError(true);
       return;
     }
 
@@ -188,8 +282,7 @@ const usePromptForm = () => {
     const { instructionName, selectedModel, selectedExample } = formState;
 
     if (!instructionName || !selectedModel || !selectedExample) {
-      setIsError(true)
-    
+      setIsError(true);
       return;
     }
 

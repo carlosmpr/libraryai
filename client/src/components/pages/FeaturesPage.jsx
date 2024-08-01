@@ -4,7 +4,9 @@ import Hero from "../ui/Hero";
 import FadeInTransition from "../animations/FadeTransition";
 import ServiceItem from "../ui/ServiceItem";
 import CenterHeading from "../ui/CenterHeading";
-const FeaturesPage = ({generalData}) => {
+import { useLocalization } from "../context/LocalizationContext";
+const FeaturesPage = () => {
+  const { generalData } = useLocalization();
   const {  services, heroes, additionalSection, feature } = generalData;
   return (
     <Feature {...feature} >

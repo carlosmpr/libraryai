@@ -9,6 +9,29 @@ import {
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../ui/BreadCrumbs";
 import SideBar from "../ui/SideBar";
+import { useLocalization } from "../context/LocalizationContext";
+
+const englishText = {
+  whereSaved: "Where is this saved?",
+  modifyingInstructions: "Modifying Instructions",
+  whereSavedDesc:
+    "Your custom prompts or instructions are saved in a repository named library-username-config inside a JSON file.",
+  modifyingInstructionsDesc:
+    "While the app can modify the content of the JSON file, deletion of the file needs to be performed directly on GitHub.",
+  noInstructions: "No user Default Instructions",
+  useOnLaptop: "Oh no, this feature is intended to be used on your Laptop",
+};
+
+const spanishText = {
+  whereSaved: "¿Dónde se guarda esto?",
+  modifyingInstructions: "Modificación de Instrucciones",
+  whereSavedDesc:
+    "Sus indicaciones o instrucciones personalizadas se guardan en un repositorio llamado library-username-config dentro de un archivo JSON.",
+  modifyingInstructionsDesc:
+    "Aunque la aplicación puede modificar el contenido del archivo JSON, la eliminación del archivo debe realizarse directamente en GitHub.",
+  noInstructions: "No hay instrucciones predeterminadas del usuario",
+  useOnLaptop: "Oh no, esta función está destinada a usarse en su portátil",
+};
 
 const ListPrompts = ({ id, name, instructions, model, onDelete }) => {
   const [expand, setExpand] = useState(false);
@@ -69,6 +92,8 @@ const ListPrompts = ({ id, name, instructions, model, onDelete }) => {
 
 const UserPrompts = () => {
   const { userInstructions, setUserInstructions } = useInstructions();
+  const { isSpanish } = useLocalization();
+  const text = isSpanish ? spanishText : englishText;
 
   const handleDeleteInstruction = async (id) => {
     console.log(id);
@@ -95,24 +120,19 @@ const UserPrompts = () => {
 
   return (
     <div className="flex bg-orange-100 h-screen">
-      <SideBar >
-      <div className="w-full space-y-8">
-      <div>
-            <span className="font-semibold">Where is this saved?</span>
-            <p className="text-sm">
-              Your custom prompts or instructions are saved in a repository named library-username-config inside a JSON file.
-            </p>
+      <SideBar>
+        <div className="w-full space-y-8">
+          <div>
+            <span className="font-semibold">{text.whereSaved}</span>
+            <p className="text-sm">{text.whereSavedDesc}</p>
           </div>
 
           <div>
-            <span className="font-semibold">Modifying Instructions</span>
-            <p className="text-sm">
-              While the app can modify the content of the JSON file, deletion of the file needs to be performed directly on GitHub.
-            </p>
+            <span className="font-semibold">{text.modifyingInstructions}</span>
+            <p className="text-sm">{text.modifyingInstructionsDesc}</p>
           </div>
-          </div>
-
-        </SideBar>
+        </div>
+      </SideBar>
       <div className="flex flex-col bg-orange-100 flex-1 h-screen px-20">
         <div className="py-6">
           <Breadcrumbs />
@@ -132,14 +152,12 @@ const UserPrompts = () => {
             </div>
           ) : (
             <div className="text-center items-center justify-center">
-              <p>No user Default Instructions</p>
+              <p>{text.noInstructions}</p>
             </div>
           )}
         </div>
         <div className="text-center items-center justify-center lg:hidden h-full">
-          <p className="text-xl">
-            Oh no this feature was intended to be use on your Laptop{" "}
-          </p>
+          <p className="text-xl">{text.useOnLaptop}</p>
         </div>
       </div>
     </div>

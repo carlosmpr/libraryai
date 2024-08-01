@@ -13,6 +13,7 @@ const englishText = {
   selectDirectory: "Select a Directory:",
   uploading: "Uploading...",
   uploadFile: "Upload File",
+  note: "Note: The default instruction is in English. For other languages, create a custom prompt.",
 };
 
 const spanishText = {
@@ -24,6 +25,7 @@ const spanishText = {
   selectDirectory: "Seleccione un Directorio:",
   uploading: "Subiendo...",
   uploadFile: "Subir Archivo",
+  note: "Nota: La instrucción predeterminada está en inglés. Para otros idiomas, crea un prompt personalizado.",
 };
 
 const UploadForm = ({
@@ -114,6 +116,8 @@ const UploadForm = ({
         >
           {isLoading ? text.uploading : text.uploadFile}
         </button>
+
+        <p className="mt-4 text-xs">{text.note}</p>
       </div>
       <div className="flex flex-col flex-1 mb-4 overflow-y-scroll">
         <h3 className="font-semibold">{text.selectDirectory}</h3>

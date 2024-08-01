@@ -103,6 +103,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
         accept={allowedExtensions.join(",")}
         id="fileUpload"
         multiple
+        required
       />
       <label htmlFor="fileUpload" className="cursor-pointer">
         {selectedFiles.length > 0 ? (

@@ -101,9 +101,7 @@ const UploadFile = () => {
       body: formData,
     });
 
-    if (!response.ok) {
-      throw new Error("Failed to upload file");
-    }
+    
 
     const result = await response.json();
     console.log("File upload response:", result);

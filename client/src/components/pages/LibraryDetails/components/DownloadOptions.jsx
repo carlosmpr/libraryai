@@ -58,7 +58,7 @@ const DownloadOptions = ({ selectedFileContent, repoName }) => {
           <DocumentTextIcon className="w-8" />
           <span>{text.downloadMD}</span>
         </a>
-        <div className="absolute hidden group-hover:flex flex-col items-center bg-white border border-black shadow-lg p-2 rounded-lg mb-2 bottom-full pointer-events-auto -mb-2">
+        <div className="absolute hidden group-hover:flex flex-col items-center bg-white border border-black shadow-lg p-2 rounded-lg mb-2 bottom-full pointer-events-auto -mb-3">
           <a
             className="btn btn-outline btn-primary w-full mb-2 cursor-pointer"
             onClick={handleDownloadMarkdown}

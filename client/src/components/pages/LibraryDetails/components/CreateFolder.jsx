@@ -65,7 +65,6 @@ const CreateFolder = () => {
 
   const handleClose = () => {
     setIsModalOpen(false);
-    loadContents();
     setSelectedStructure(null);
   };
 

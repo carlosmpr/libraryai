@@ -225,11 +225,7 @@ router.post(
         data: results,
       });
     } catch (error) {
-      console.error("Error uploading files:", error);
-      res.status(500).json({
-        message: "Failed to upload files",
-        error: error.message,
-      });
+      handleError(res, "Failed to upload files", error);
     }
   }
 );

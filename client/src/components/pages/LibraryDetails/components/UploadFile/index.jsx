@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { ArrowUpTrayIcon } from "@heroicons/react/24/outline";
 import useLoadingIndicator from "../../../../hooks/useLoadingIndicator";
 import UploadForm from "./UploadForm";
@@ -80,7 +80,7 @@ const UploadFile = () => {
     };
   }, [isModalOpen, userProfile]);
 
-  const handleFileUpload = useCallback(async () => {
+  const handleFileUpload = async () => {
     if (selectedFiles.length === 0 || !(uploadPath || newDirectory)) return;
 
     const formData = new FormData();
@@ -95,26 +95,33 @@ const UploadFile = () => {
       formData.append("instructions", instruction.instructions);
     }
 
-    const response = await fetch("/api/upload-file", {
-      method: "POST",
-      credentials: "include",
-      body: formData,
-    });
+    try {
+      const response = await fetch("/api/upload-file", {
+        method: "POST",
+        credentials: "include",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to upload file");
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Error response from server:", errorText);
+        throw new Error("Failed to upload file");
+      }
+
+      const result = await response.json();
+      console.log("File upload response:", result);
+    } catch (error) {
+      console.error("File upload error:", error);
+      setError("Failed to upload file. Please check the console for more details.");
     }
+  };
 
-    const result = await response.json();
-    console.log("File upload response:", result);
-  }, [selectedFiles, uploadPath, newDirectory, repoName, selectedInstruction, userInstructions]);
-
-  const handleSubmit = useCallback((e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     handleLoading(handleFileUpload);
-  }, [handleLoading, handleFileUpload]);
+  };
 
-  const handleModalClose = useCallback(() => {
+  const handleModalClose = () => {
     setSelectedFiles([]);
     setError("");
     setUploadPath("");
@@ -122,12 +129,12 @@ const UploadFile = () => {
     setIsModalOpen(false);
     setSelectedInstruction("");
     setProgress(0);
-  }, [setUploadPath, setIsModalOpen]);
+  };
 
-  const handleClearFiles = useCallback(() => {
+  const handleClearFiles = () => {
     setSelectedFiles([]);
     setError("");
-  }, []);
+  };
 
   console.log(progress);
 
@@ -166,6 +173,7 @@ const UploadFile = () => {
           setSelectedInstruction={setSelectedInstruction}
           dirView={<DirView />}
         />
+        {error && <div className="text-red-500 mt-4">{error}</div>}
       </Popup>
     </>
   );

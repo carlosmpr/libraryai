@@ -35,7 +35,7 @@ const LibraryDetailsContent = () => {
           <MarkDownPreview selectedFileContent={selectedFileContent} />
         )}
       </div>
-      <div className="fixed hidden sm:flex  w-full bottom-0">
+      <div className="fixed hidden lg:flex  w-full bottom-0">
         <div className="ml-[20%] flex w-full bg-base-100 p-4 mx-auto border-t-2 border-black gap-4">
           <CreateFolder />
 

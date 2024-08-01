@@ -1,15 +1,23 @@
-
 import { Link } from "react-router-dom";
 import {
   AdjustmentsHorizontalIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
+import { useLocalization } from "../context/LocalizationContext";
 
-function NavigationButton({
-  to,
-  icon: Icon,
-  title,
-}) {
+const textEn = {
+  customPrompts: "Custom Prompts",
+  createPrompt: "Create Prompt",
+  signOut: "Sign Out",
+};
+
+const textEs = {
+  customPrompts: "Prompts Personalizados",
+  createPrompt: "Crear Prompt",
+  signOut: "Cerrar Sesión",
+};
+
+function NavigationButton({ to, icon: Icon, title }) {
   return (
     <Link
       to={to}
@@ -22,6 +30,9 @@ function NavigationButton({
 }
 
 export default function PromptNavigations() {
+  const { isSpanish } = useLocalization();
+  const text = isSpanish ? textEs : textEn;
+
   const handleSignOut = async () => {
     try {
       const response = await fetch('/signout', {
@@ -30,7 +41,6 @@ export default function PromptNavigations() {
       });
 
       if (response.ok) {
-        // Server will handle the redirect
         window.location.href = '/'; // Fallback in case server does not handle redirect
       } else {
         console.error('Failed to sign out');
@@ -41,21 +51,19 @@ export default function PromptNavigations() {
   };
 
   return (
-    <div className="flex flex-col gap-4 mt-auto  ">
+    <div className="flex flex-col gap-4 mt-auto">
       <NavigationButton
         to="/userPrompts"
         icon={AdjustmentsHorizontalIcon}
-        title={"Custom Prompts"}
+        title={text.customPrompts}
       />
-
       <NavigationButton
         to="/customizeprompt"
         icon={Cog6ToothIcon}
-        title={"Create Prompt"}
+        title={text.createPrompt}
       />
-
       <button className="btn btn-secondary btn-sm" onClick={handleSignOut}>
-        Sign out
+        {text.signOut}
       </button>
     </div>
   );

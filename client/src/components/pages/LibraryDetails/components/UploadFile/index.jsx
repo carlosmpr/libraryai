@@ -95,24 +95,18 @@ const UploadFile = () => {
       formData.append("instructions", instruction.instructions);
     }
 
-    try {
-      const response = await fetch("/api/upload-file", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+    const response = await fetch("/api/upload-file", {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Error response from server:", errorText);
-        throw new Error("Failed to upload file");
-      }
-
-      const result = await response.json();
-      console.log("File upload response:", result);
-    } catch (error) {
-      console.error("File upload error:", error);
+    if (!response.ok) {
+      throw new Error("Failed to upload file");
     }
+
+    const result = await response.json();
+    console.log("File upload response:", result);
   }, [selectedFiles, uploadPath, newDirectory, repoName, selectedInstruction, userInstructions]);
 
   const handleSubmit = useCallback((e) => {

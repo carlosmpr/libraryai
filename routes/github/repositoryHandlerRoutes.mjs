@@ -217,7 +217,9 @@ router.post(
         processedFiles++;
         sendProgressUpdate(processedFiles, req.files.length);
 
-        await new Promise((resolve) => setTimeout(resolve, 0));
+        if (model !== "3.5-turbo") {
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
       }
 
       res.json({
@@ -225,9 +227,12 @@ router.post(
         data: results,
       });
     } catch (error) {
+      console.error("Error during file upload:", error);
       handleError(res, "Failed to upload files", error);
     }
   }
 );
+
+
 
 export default router;

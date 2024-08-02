@@ -40,7 +40,6 @@ const PromptForm = ({
             <option disabled value="">
               Select Model
             </option>
-            <option value="gpt-4o">gpt-4o</option>
             <option value="gpt-4-turbo">gpt-4-turbo</option>
             <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
           </select>

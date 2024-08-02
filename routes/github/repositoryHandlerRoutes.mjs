@@ -185,7 +185,7 @@ router.post(
           ? uploadPath.substring(1)
           : uploadPath;
         let baseFileName = file.originalname.replace(
-          /\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro)$/,
+          /\.(js|jsx|ts|tsx|py|java|rb|php|html|css|cpp|c|go|rs|swift|kt|m|h|cs|json|xml|sh|yml|yaml|vue|svelte|qwik|sv|astro|mjs)$/,
           ""
         );
         let extension = ".md";

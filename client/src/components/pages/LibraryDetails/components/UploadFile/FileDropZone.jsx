@@ -21,7 +21,7 @@ const FileDropZone = ({ selectedFiles, setSelectedFiles, setError }) => {
     ".js", ".jsx", ".ts", ".tsx", ".py", ".java", ".rb", ".php",
     ".html", ".css", ".cpp", ".c", ".go", ".rs", ".swift", ".kt", 
     ".m", ".h", ".cs", ".json", ".xml", ".sh", ".yml", ".yaml", 
-    ".vue", ".svelte", ".qwik", ".astro"
+    ".vue", ".svelte", ".qwik", ".astro", ".mjs"
   ];
   const maxFiles = 4;
 
